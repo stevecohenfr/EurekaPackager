@@ -29,7 +29,7 @@ SCRIPT_NAME='EurekaPackager'
 #######################################
 
 function check_update {
-    REMOTE_VERSION=`curl -s https://raw.githubusercontent.com/ReaperSoon/EurekaPackager/master/VERSION`
+    REMOTE_VERSION=`curl -sL https://rawgit.com/ReaperSoon/EurekaPackager/master/VERSION`
 
     if [[ "$SCRIPT_VERSION" < "$REMOTE_VERSION" ]]; then
 	printf "${Yellow}Your script is deprecated (${SCRIPT_VERSION} < ${REMOTE_VERSION}). Please use -u or --upgrade${Color_Off}\n"
@@ -37,7 +37,7 @@ function check_update {
 }
 
 function self_upgrade {
-    DIST_SCRIPT="https://raw.githubusercontent.com/ReaperSoon/EurekaPackager/master/script_livraison.sh"
+    DIST_SCRIPT="https://rawgit.com/ReaperSoon/EurekaPackager/master/EurekaPackager.sh"
 
     # Download new version
     printf "${Green}Downloading latest version...${Color_Off}\n"
