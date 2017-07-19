@@ -20,7 +20,7 @@ Purple='\033[0;35m'       # Purple
 Cyan='\033[0;36m'         # Cyan
 White='\033[0;37m'        # White
 # Script Infos
-SCRIPT_VERSION='0.6'
+SCRIPT_VERSION='0.6.1'
 SCRIPT_NAME='EurekaPackager'
 
 
