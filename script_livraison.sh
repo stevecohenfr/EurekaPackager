@@ -20,7 +20,7 @@ Purple='\033[0;35m'       # Purple
 Cyan='\033[0;36m'         # Cyan
 White='\033[0;37m'        # White
 # Script Infos
-SCRIPT_VERSION='0.5'
+SCRIPT_VERSION='0.6'
 SCRIPT_NAME='EurekaPackager'
 
 
@@ -37,7 +37,7 @@ function check_update {
 }
 
 function self_upgrade {
-    DIST_SCRIPT="https://raw.githubusercontent.com/ReaperSoon/EurekaPackager/master/README.md"
+    DIST_SCRIPT="https://raw.githubusercontent.com/ReaperSoon/EurekaPackager/master/script_livraison.sh"
 
     # Download new version
     printf "${Green}Downloading latest version...${Color_Off}\n"
