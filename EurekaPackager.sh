@@ -149,10 +149,10 @@ fi
 #######################################
 
 # CONFIG
-ALL_DELIVER_FOLDER="/lxc/croix-rouge/var/www/livraisons"
-EZ_ROOT="/lxc/croix-rouge/var/www/irfss/www"
+ALL_DELIVER_FOLDER="."
+EZ_ROOT="."
 TODAY=`date +"%Y%m%d"`
-NAME="CRF_IRFSS_"$TODAY 
+NAME="EUREKA_"$TODAY
 
 DELIVER_FOLDER=$ALL_DELIVER_FOLDER/$NAME
 FOLDER_SRC=$DELIVER_FOLDER"/src"
@@ -229,11 +229,10 @@ fi
 
 printf "${Blue}Copying files in delivery directories${Color_Off}\n"
 
-cp -R $FOLDER_SRC $FOLDER_SRC_INTEG
-cp -R $FOLDER_SRC $FOLDER_SRC_RECETTE
-cp -R $FOLDER_SRC $FOLDER_SRC_PREPROD
-cp -R $FOLDER_SRC $FOLDER_SRC_PROD
-
+cp -rT $FOLDER_SRC $FOLDER_SRC_INTEG
+cp -rT $FOLDER_SRC $FOLDER_SRC_RECETTE
+cp -rT $FOLDER_SRC $FOLDER_SRC_PREPROD
+cp -rT $FOLDER_SRC $FOLDER_SRC_PROD
 
 printf "${Blue}Updating files depending on environments${Color_Off}\n"
 
