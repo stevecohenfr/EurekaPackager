@@ -6,22 +6,7 @@
 # 12/04/2017
 #
 
-#######################################
-################ VARS #################
-#######################################
-# Regular Colors
-Color_Off='\033[0m'       # Text Reset
-Black='\033[0;30m'        # Black
-Red='\033[0;31m'          # Red
-Green='\033[0;32m'        # Green
-Yellow='\033[0;33m'       # Yellow
-Blue='\033[0;34m'         # Blue
-Purple='\033[0;35m'       # Purple
-Cyan='\033[0;36m'         # Cyan
-White='\033[0;37m'        # White
-# Script Infos
-SCRIPT_VERSION='0.6.1'
-SCRIPT_NAME='EurekaPackager'
+source .common.sh
 
 
 #######################################
@@ -94,6 +79,8 @@ function show_usage {
     echo -e "  -v,  --version\t\t\t show the script version"
 }
 
+
+
 #######################################
 ############# CHECK ARGS ##############
 #######################################
@@ -102,77 +89,50 @@ if [ "$#" -eq 0 ]; then
     exit
 fi
 
-COMMIT=''
-TICKET=''
-HELP=''
-VERSION=''
+declare -A COMMITS
 
-for i in "$@"
-do
-case $i in
-    --commit=*)
-	COMMIT=${COMMIT}"\n"${i#*=}
-	shift
-    ;;
-    --message=*)
-	MESSAGE="${MESSAGE}\n${i#*=}"
-	shift
-    ;;
-    -u|--upgrade)
-	self_upgrade
-    ;;
-    -h|--help)
-	HELP="help"
-    ;;
-    -v|--version)
-	VERSION="version"
-    ;;
-    *)
-    show_usage
-    exit
-    ;;
-esac
+for i in "$@";do
+    case $i in
+        -c=*|--commit=*)
+        COMMIT=$(echo -e "${COMMIT}\n${i#*=}")
+        shift
+        ;;
+        -m=*|--message=*)
+        MESSAGE=$(echo -e "${MESSAGE}\n${i#*=}")
+        shift
+        ;;
+        -u|--upgrade)
+        self_upgrade
+        ;;
+        -h|--help)
+        show_usage
+        exit
+        ;;
+        -v|--version)
+        echo "Script version: ${SCRIPT_VERSION}"
+        exit
+        ;;
+        *)
+        show_usage
+        exit
+        ;;
+    esac
 done
-
-if [[ ! ${HELP} == '' ]]; then
-    show_usage
-    exit
-fi
-
-if [[ ! ${VERSION} == '' ]]; then
-    echo "Script version: ${SCRIPT_VERSION}"
-    exit
-fi
 
 #######################################
 ############ SCRIPT LOGIC #############
 #######################################
 
-# CONFIG
-ALL_DELIVER_FOLDER="."
-EZ_ROOT="."
-TODAY=`date +"%Y%m%d"`
-NAME="EUREKA_"$TODAY
-
-DELIVER_FOLDER=$ALL_DELIVER_FOLDER/$NAME
-FOLDER_SRC=$DELIVER_FOLDER"/src"
-FOLDER_SRC_INTEG=$FOLDER_SRC"_integ"
-FOLDER_SRC_RECETTE=$FOLDER_SRC"_recette"
-FOLDER_SRC_PREPROD=$FOLDER_SRC"_preprod"
-FOLDER_SRC_PROD=$FOLDER_SRC"_prod"
-
 echo "Starting archive script..."
 
-mkdir -p $FOLDER_SRC
-
-cd $EZ_ROOT
+cd $PROJECT_ROOT
 
 #If GIT message is provided, search git commit SHA1
-if [[ ! ${MESSAGE} == '' ]] && [[ ${COMMIT} == '' ]]; then
-    messages=$(echo -e ${MESSAGE}|sort|uniq)
+if [[ ! ${MESSAGE} == '' ]]; then
+    messages=$(echo -e ${MESSAGE}|uniq)
     for mess in $messages; do
-        printf "Searching commit SH1 using commit containing message ${Blue}${mess}${Color_Off}...\n"
-        COMMIT_LINES=`git log --all --pretty=oneline --grep="${mess}"`
+        printf "Searching commit SHA1 using commit containing message ${Blue}${mess}${Color_Off}...\n"
+        COMMIT_LINES=`git log --all --pretty=format:"%H %ai %s" --grep="${mess}"`
 
         # Commit found
         if [ ! "${COMMIT_LINES}" == '' ]; then
@@ -180,62 +140,73 @@ if [[ ! ${MESSAGE} == '' ]] && [[ ${COMMIT} == '' ]]; then
             echo "-----------------------------------------------------------------"
             echo "${COMMIT_LINES}"
             echo "-----------------------------------------------------------------"
-            read -p "Is it the commit(s) you want to deliver ?(Y/n) " -r
-            echo
-            if [[ ! $REPLY =~ ^[Yy]$ ]] && [ ! $REPLY = "" ] 
-            then
-                printf "${Red}Aborting.${Color_Off}\n"
-                exit 1
+            question="Is this the commit/Are these the commits you want to deliver ?(Y/n) "
+            if ask_continue "$question";then
+                for COMMIT_LINE in "$COMMIT_LINES"; do
+                    commit=`echo "${COMMIT_LINE}" | awk '{print $1}'`
+                    COMMIT+=$(echo -e "\n${commit}")
+                done
             fi
-
-            for COMMIT_LINE in "$COMMIT_LINES"; do
-                commit=`echo "${COMMIT_LINE}" | awk '{print $1}'`
-                COMMIT=${COMMIT}"\n"$commit
-            done
-        # Commit NOT found
-        else
-            printf "${Red}Sorry, commit not found.${Color_Off}\n"
-            exit 1
         fi
     done
 fi
 
-COMMIT=$(echo -e $COMMIT|sort|uniq)
-
-# Liste fichier modifié
-for commit in $COMMIT
-do
-    filecommit=$(git show --oneline --name-only $commit | tail -n+2 | sed -e "s/www\///g")"\n"$filecommit
-done
-
-filecommit=$(echo -e $filecommit|sort|uniq)
-
-printf "${Blue}Files list :${Color_Off}\n"
-echo "-----------------------------------------------------------------"
-for file in $filecommit; do
-   echo $file
-   cp --parents $file $FOLDER_SRC
-done
-echo "-----------------------------------------------------------------"
-
-printf "${Green}Files are ready for the packages in $FOLDER_SRC${Color_Off}\n"
-read -p "Continue ?(Y/n) " -r
-echo
-if [[ ! $REPLY =~ ^[Yy]$ ]] && [ ! $REPLY = "" ] 
-then
-    printf "${Red}Aborting.${Color_Off}\n"
+# No Commit found -> Quit
+if [[ ${COMMIT} == '' ]]; then
+    printf "${Red}Sorry, no commit to pack. Quitting...${Color_Off}\n"
     exit 1
 fi
 
-printf "${Blue}Copying files in delivery directories${Color_Off}\n"
+# List commits in map array
+for commit in $COMMIT; do
+    if git cat-file -e ${commit} 2> /dev/null; then
+        commit_key=`git log -1  --pretty=format:"%ai %H" ${commit}`
+        COMMITS[$commit_key]=`git log -1  --pretty=format:"%ai %h %s" ${commit}`
+    else
+       printf "${Red}Commit ${commit} doesn't exist ...${Color_Off}\n\n"
+    fi
+done
 
-cp -rT $FOLDER_SRC $FOLDER_SRC_INTEG
-cp -rT $FOLDER_SRC $FOLDER_SRC_RECETTE
-cp -rT $FOLDER_SRC $FOLDER_SRC_PREPROD
-cp -rT $FOLDER_SRC $FOLDER_SRC_PROD
+# Sort commits by date
+IFS=$'\n' SORTED_COMMITS=($(sort -u <<<"${!COMMITS[*]}"))
+unset IFS
 
-printf "${Blue}Updating files depending on environments${Color_Off}\n"
+COMMIT_LIST=''
+# Get SHA1 of commits sorted by date
+printf "${Blue}Final commit list to deliver :${Color_Off}\n"
+echo "-----------------------------------------------------------------"
+for COMMIT_LINE in "${SORTED_COMMITS[@]}"; do
+    echo "${COMMITS[${COMMIT_LINE}]}"
+    commit=`echo "${COMMIT_LINE}" | awk '{print $NF}'`
+    COMMIT_LIST+=$(echo -e "\n${commit}")
+done
+echo "-----------------------------------------------------------------"
 
+rm -rf $DELIVER_TOP_FOLDER
+mkdir -p $TMP_DIR
+
+#temp tar archives for each commit
+tar_files=''
+for commit in $COMMIT_LIST; do
+    git archive  --format=tar.gz -o "${TMP_DIR}/${commit}.tar.gz" ${commit} $(git diff --name-only --diff-filter=AMC ${commit}^..${commit})
+    tar_files+="${TMP_DIR}/${commit}.tar.gz "
+done
+#concat tar archives in the final tar
+cat $tar_files >> $TMP_TAR
+
+mkdir ${FOLDER_SRC}
+tar ixf $TMP_TAR -C ${FOLDER_SRC}
+rm -rf $TMP_DIR
+
+printf "${Blue}Files list :${Color_Off}\n"
+echo "-----------------------------------------------------------------"
+ls -1 ${FOLDER_SRC}
+echo "-----------------------------------------------------------------"
+printf "${Green}Files are ready for the packages in $FOLDER_SRC${Color_Off}\n"
+question="Continue ? (Y/n) "
+ask_continue "$question"
+
+# Parse files, replace and remove __ENV__ lines
 #
 # $1 : __ENV__ pattern
 # $2 : file to modify
@@ -260,68 +231,40 @@ function update_env {
     done < $2
     #Remove all __ENV__ from lines
     sed -e "s/$1//g" -i "$2"
-}  
+}
 
-#INTEGRATION
-for file in `find $FOLDER_SRC_INTEG -type f`; do
-        update_env "__INTEG__" $file
+
+# Processing committed files
+printf "${Blue}Copying files in delivery directories and packing${Color_Off}\n"
+
+for ((i=0;i<${#ENVS_AFFIXES[@]};++i)); do
+
+    printf "${Blue}${ENVS[i]}${Color_Off}\n"
+    mkdir ${DELIVER_FOLDERS[i]}
+    cp -r "${FOLDER_SRC}/." ${DELIVER_FOLDERS[i]}
+
+    for file in `find ${DELIVER_FOLDERS[i]} -type f`; do
+        update_env ${ENVS_AFFIXES[i]} $file
+    done
+
+    for file in `find ${DELIVER_FOLDERS[i]} -name *${ENVS_AFFIXES[i]}*`; do
+            rm `echo $file | sed s/${ENVS_AFFIXES[i]}//g`;
+            mv $file `echo $file | sed s/${ENVS_AFFIXES[i]}//g`;
+    done
+
+    cd ${DELIVER_FOLDERS[i]}
+    tar cf "../${DELIVER_ARCHIVES[i]}.tar.gz" *
+    cd - > /dev/null
 done
 
-for file in `find $FOLDER_SRC_INTEG -name *__INTEG__*`; do
-        rm `echo $file | sed s/__INTEG__//g`;
-        mv $file `echo $file | sed s/__INTEG__//g`;
-done
+printf "${Green}Your packages are ready in $DELIVER_TOP_FOLDER${Color_Off}\n"
 
-# RECETTE
-for file in `find $FOLDER_SRC_RECETTE -type f`; do
-        update_env "__RECETTE__" $file
-done
 
-for file in `find $FOLDER_SRC_RECETTE -name *__RECETTE__*`; do
-        rm `echo $file | sed s/__RECETTE__//g`;
-        mv $file `echo $file | sed s/__RECETTE__//g`;
-done
 
-# PREPROD
-for file in `find $FOLDER_SRC_PREPROD -type f`; do
-        update_env "__PREPROD__" $file
-done
+####################################
+# ######### DEPLOY ############### #
+####################################
+question="Proceed to deploy ? (Y/n) "
+ask_continue "$question"
 
-for file in `find $FOLDER_SRC_PREPROD -name *__PREPROD__*`; do
-        rm `echo $file | sed s/__PREPROD__//g`;
-        mv $file `echo $file | sed s/__PREPROD__//g`;
-done
-
-#PROD
-for file in `find $FOLDER_SRC_PROD -type f`; do
-        update_env "__PROD__" $file
-done
-
-for file in `find $FOLDER_SRC_PROD -name *__PROD__*`; do
-        rm `echo $file | sed s/__PROD__//g`;
-        mv $file `echo $file | sed s/__PROD__//g`;
-done
-
-printf "${Blue}Creating packages${Color_Off}\n"
-
-printf "${Blue}INTEGRATION${Color_Off}\n"
-cd $FOLDER_SRC_INTEG
-tar -zcvf ../"INTEG_"$NAME.tar.gz *
-cd -
-
-printf "${Blue}RECETTE${Color_Off}\n"
-cd $FOLDER_SRC_RECETTE
-tar -zcvf ../"RECETTE_"$NAME.tar.gz *
-cd -
-
-printf "${Blue}PREPRODUCTION${Color_Off}\n"
-cd $FOLDER_SRC_PREPROD
-tar -zcvf ../"PREPROD_"$NAME.tar.gz *
-cd -
-
-printf "${Blue}PRODUCTION${Color_Off}\n"
-cd $FOLDER_SRC_PROD
-tar -zcvf ../"PROD_"$NAME.tar.gz *
-cd -
-
-printf "${Green}Your packages are ready in $DELIVER_FOLDER${Color_Off}\n"
+source EurekaDeployer.sh
