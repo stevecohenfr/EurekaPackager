@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 
-TMP_FILE='.deploy_tmp'
-source delivery_default.conf
-source .common.sh
+SCRIPT=`realpath -s $0`
+SCRIPTPATH=`dirname $SCRIPT`
+
+TMP_FILE="$SCRIPTPATH/.deploy_tmp"
+source "$SCRIPTPATH/"delivery_default.conf
+source "$SCRIPTPATH/".common.sh
 source "$TMP_FILE"
 DEPLOY_COMMAND=''
 
@@ -44,8 +47,8 @@ blank_field() {
 #
 insist_dialog() {
 while [ -z $REPLY ] ;do
-    read -p "$1" REPLY
-    REPLY=${REPLY:-$2}
+    read -p "$1" RESP
+    REPLY=${RESP:-$2}
     blank_field $REPLY
 done
 echo -ne $REPLY

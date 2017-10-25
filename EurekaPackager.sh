@@ -6,7 +6,9 @@
 # 12/04/2017
 #
 
-source .common.sh
+SCRIPT=`realpath -s $0`
+SCRIPTPATH=`dirname $SCRIPT`
+source "$SCRIPTPATH/".common.sh
 
 
 #######################################
@@ -53,7 +55,7 @@ fi
 EOF
 
     printf "${Green}Upgrading script...${Color_Off}\n"
-    exec /bin/bash .updatescript.sh  
+    exec /bin/bash .updatescript.sh
 }
 
 check_update
@@ -125,8 +127,6 @@ done
 
 echo "Starting archive script..."
 
-cd $PROJECT_ROOT
-
 #If GIT message is provided, search git commit SHA1
 if [[ ! ${MESSAGE} == '' ]]; then
     messages=$(echo -e ${MESSAGE}|uniq)
@@ -194,13 +194,29 @@ done
 #concat tar archives in the final tar
 cat $tar_files >> $TMP_TAR
 
+
+#
+# move source files to deploy in delivery directory : if deploy target's dir different from project's dir
+#
+move_sources() {
+    if [ ! "$DEPLOY_ROOT" == "." ]; then
+        ORIGIN_FILES="${FOLDER_SRC}/${DEPLOY_ROOT}/*"
+        DEST_FILES="${FOLDER_SRC}/"
+        mv $ORIGIN_FILES $DEST_FILES
+        rm -rf "${FOLDER_SRC}/${DEPLOY_ROOT}"
+    fi
+}
+
+
 mkdir ${FOLDER_SRC}
 tar ixf $TMP_TAR -C ${FOLDER_SRC}
+move_sources
 rm -rf $TMP_DIR
+
 
 printf "${Blue}Files list :${Color_Off}\n"
 echo "-----------------------------------------------------------------"
-ls -1 ${FOLDER_SRC}
+find "${FOLDER_SRC}/" -type f
 echo "-----------------------------------------------------------------"
 printf "${Green}Files are ready for the packages in $FOLDER_SRC${Color_Off}\n"
 question="Continue ? (Y/n) "
@@ -267,4 +283,4 @@ printf "${Green}Your packages are ready in $DELIVER_TOP_FOLDER${Color_Off}\n"
 question="Proceed to deploy ? (Y/n) "
 ask_continue "$question"
 
-source EurekaDeployer.sh
+source "$SCRIPTPATH/"EurekaDeployer.sh
