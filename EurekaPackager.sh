@@ -236,6 +236,7 @@ function update_env {
         fi
     done < $2
     #Remove all __ENV__ from current file
+    sed -e "s/$1//g" -i "$2"
     sed -e '/__INTEG__/ d' -i "$2"
     sed -e '/__RECETTE__/ d' -i "$2"
     sed -e '/__PROD__/ d' -i "$2"
