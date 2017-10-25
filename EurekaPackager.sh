@@ -195,22 +195,12 @@ done
 cat $tar_files >> $TMP_TAR
 
 
-#
-# move source files to deploy in delivery directory : if deploy target's dir different from project's dir
-#
-move_sources() {
-    if [ ! "$DEPLOY_ROOT" == "." ]; then
-        ORIGIN_FILES="${FOLDER_SRC}/${DEPLOY_ROOT}/*"
-        DEST_FILES="${FOLDER_SRC}/"
-        mv $ORIGIN_FILES $DEST_FILES
-        rm -rf "${FOLDER_SRC}/${DEPLOY_ROOT}"
-    fi
-}
-
-
 mkdir ${FOLDER_SRC}
-tar ixf $TMP_TAR -C ${FOLDER_SRC}
-move_sources
+ if [ ! "$DEPLOY_ROOT" == "." ]; then
+    tar ixf $TMP_TAR -C ${FOLDER_SRC} --skip 1 "${DEPLOY_ROOT}/*"
+else
+    tar ixf $TMP_TAR -C ${FOLDER_SRC}
+fi
 rm -rf $TMP_DIR
 
 
@@ -245,8 +235,11 @@ function update_env {
             done < "$2"
         fi
     done < $2
-    #Remove all __ENV__ from lines
-    sed -e "s/$1//g" -i "$2"
+    #Remove all __ENV__ from current file
+    sed -e '/__INTEG__/ d' -i "$2"
+    sed -e '/__RECETTE__/ d' -i "$2"
+    sed -e '/__PROD__/ d' -i "$2"
+    sed -e '/__PREPROD__/ d' -i "$2"
 }
 
 
@@ -280,7 +273,3 @@ printf "${Green}Your packages are ready in $DELIVER_TOP_FOLDER${Color_Off}\n"
 ####################################
 # ######### DEPLOY ############### #
 ####################################
-question="Proceed to deploy ? (Y/n) "
-ask_continue "$question"
-
-source "$SCRIPTPATH/"EurekaDeployer.sh
