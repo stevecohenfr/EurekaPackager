@@ -33,6 +33,46 @@ declare -a ENVS=("INTEGRATION" "RECETTE" "PREPRODUCTION" "PRODUCTION")
 declare -a DELIVER_ARCHIVES=("INTEG_$NAME" "RECETTE_$NAME" "PREPROD_$NAME" "PROD_$NAME")
 
 #
+# YML parsing
+# $1 : .yml file
+# $2 : var name - prefix
+#
+function parse_yaml() {
+    local yaml_file=$1
+    local prefix=$2
+    local s
+    local w
+    local fs
+
+    s='[[:space:]]*'
+    w='[a-zA-Z0-9_]*'
+    fs="$(echo @|tr @ '\034')"
+
+    (
+        sed -ne 's/--//g; s/\"/\\\"/g; s/\#.*//g; s/\s*$//g;' \
+            -e  "s|^\($s\)\($w\)$s:$s\"\(.*\)\"$s\$|\1$fs\2$fs\3|p" \
+            -e "s|^\($s\)\($w\)$s[:-]$s\(.*\)$s\$|\1$fs\2$fs\3|p" |
+        awk -F"$fs" '{
+            indent = length($1)/2;
+            if (length($2) == 0) { conj[indent]="+";} else {conj[indent]="";}
+            vname[indent] = $2;
+            for (i in vname) {if (i > indent) {delete vname[i]}}
+                if (length($3) > 0) {
+                    vn=""; for (i=0; i<indent; i++) {vn=(vn)(vname[i])("_")}
+                    printf("%s%s%s%s=(\"%s\")\n", "'"$prefix"'",vn, $2, conj[indent-1],$3);
+                }
+            }' |
+        sed 's/_=/+=/g'
+    ) < "$yaml_file"
+}
+
+# Create vars from yml file ($1)
+function create_variables() {
+    local yaml_file="$1"
+    eval "$(parse_yaml "$yaml_file")"
+}
+
+#
 # Asks if user wants to remove the local delivery prepared folder
 #
 remove_packages() {

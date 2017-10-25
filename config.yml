@@ -1,0 +1,61 @@
+parameters:
+  project:
+    name: Eureka
+    target_root: .
+
+  delivery:
+    folder:
+      parent: livraisons
+      sources: src
+
+    suffix_format: _`date +'%Y%m%d'`
+
+environnements:
+  list:
+    - integ
+    - recette
+    - preprod
+    - prod
+
+  prod:
+    short: p
+    name: Production
+    suffix: __PROD__
+    deploy:
+      user: smile
+      proxy_host: localhost
+      host: localhost
+      target: /var/www/
+      commands:
+        -
+          content : composer update
+          user: www-data
+
+  preprod:
+    short: pp
+    name: Preproduction
+    suffix: __PREPROD__
+    deploy:
+      user: smile
+      host: localhost
+      target: /var/www/
+
+  integ:
+    short: i
+    name: Integration
+    suffix: __INTEG__
+    deploy:
+      user: smile
+      host: localhost
+      target: /var/www/
+
+  recette:
+    short: r
+    name: Recette
+    suffix: __RECETTE__
+    deploy:
+      user: recette
+      host: localhost
+      target: /var/www/
+
+
