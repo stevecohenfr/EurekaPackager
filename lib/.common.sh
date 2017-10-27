@@ -17,15 +17,6 @@ White='\033[0;37m'        # White
 SCRIPT_VERSION='0.6.1'
 SCRIPT_NAME='EurekaPackager'
 
-# CONFIG
-source delivery_default.conf
-
-NAME="${PROJECT_NAME}${PACKAGES_SUFFIX}"
-
-DELIVER_TOP_FOLDER=$ALL_DELIVER_FOLDER/$NAME
-FOLDER_SRC=$DELIVER_TOP_FOLDER"/src"
-TMP_DIR=$DELIVER_TOP_FOLDER"/tmp"
-TMP_TAR=$TMP_DIR"/tmp.tar.gz"
 
 declare -a DELIVER_FOLDERS=($FOLDER_SRC"_integ" $FOLDER_SRC"_recette" $FOLDER_SRC"_preprod" $FOLDER_SRC"_prod")
 declare -a ENVS_AFFIXES=("__INTEG__" "__RECETTE__" "__PREPROD__" "__PROD__")

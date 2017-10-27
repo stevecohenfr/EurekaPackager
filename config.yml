@@ -12,14 +12,14 @@ parameters:
 
 environnements:
   list:
+    - prod
+    - preprod
     - integ
     - recette
-    - preprod
-    - prod
 
   prod:
-    short: p
     name: Production
+    short: p
     suffix: __PROD__
     deploy:
       user: smile
@@ -30,6 +30,7 @@ environnements:
         -
           content : composer update
           user: www-data
+      type: package
 
   preprod:
     short: pp
@@ -39,6 +40,7 @@ environnements:
       user: smile
       host: localhost
       target: /var/www/
+      type: package
 
   integ:
     short: i
@@ -48,6 +50,7 @@ environnements:
       user: smile
       host: localhost
       target: /var/www/
+      type: sources
 
   recette:
     short: r
@@ -57,5 +60,6 @@ environnements:
       user: recette
       host: localhost
       target: /var/www/
+      type: sources
 
 
