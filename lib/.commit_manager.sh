@@ -1,18 +1,22 @@
 #!/bin/bash
 
+if [ -z ${ENV} ];then
+    printf "${Red} this file is part of 'Eureka' script. Cannot be launched individualy
+    Quitting...${Color_Off}\n"
+    exit 1
+fi
+
 declare -A COMMITS
 NAME="${parameters_project_name}${parameters_delivery_suffix_format}"
 
-DELIVER_TOP_FOLDER=$parameters_delivery_folder_parent/$NAME
+DELIVER_TOP_FOLDER="$parameters_delivery_folder_parent/$NAME"
 FOLDER_SRC="$DELIVER_TOP_FOLDER/$parameters_delivery_folder_sources"
-TMP_DIR=$DELIVER_TOP_FOLDER"/tmp"
-TMP_TAR=$TMP_DIR"/tmp.tar.gz"
+TMP_DIR="$DELIVER_TOP_FOLDER/tmp"
+TMP_TAR="$TMP_DIR/tmp.tar.gz"
 
 #######################################
 ############ SCRIPT LOGIC #############
 #######################################
-
-echo "Starting archive script..."
 
 #If GIT message is provided, search git commit SHA1
 if [[ ! ${MESSAGE} == '' ]]; then
@@ -59,7 +63,8 @@ IFS=$'\n' SORTED_COMMITS=($(sort -u <<<"${!COMMITS[*]}"))
 unset IFS
 
 COMMIT_LIST=''
-# Get SHA1 of commits sorted by date
+# print all commits sorted by date to deliver
+# and get only SHA1 of these commits
 printf "${Blue}Final commit list to deliver :${Color_Off}\n"
 echo "-----------------------------------------------------------------"
 for COMMIT_LINE in "${SORTED_COMMITS[@]}"; do
@@ -81,7 +86,7 @@ done
 #concat tar archives in the final tar
 cat $tar_files >> $TMP_TAR
 
-
+# extract tmp archive in source dir
 mkdir ${FOLDER_SRC}
  if [ ! "$parameters_project_target_root" == "." ]; then
     tar ixf $TMP_TAR -C ${FOLDER_SRC} --skip 1 "${parameters_project_target_root}/*"

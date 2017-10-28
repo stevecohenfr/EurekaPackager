@@ -1,12 +1,17 @@
 #!/bin/bash
 
+if [ -z ${ENV} ];then
+    printf "${Red} this file is part of 'Eureka' script. Cannot be launched individualy
+    Quitting...${Color_Off}\n"
+    exit 1
+fi
 
 DELIVER_FOLDER=${FOLDER_SRC}_${ENV}
 DELIVER_ARCHIVE="${ENV^^}_${NAME}.tar.gz"
-ENV_SUFFIX=environnements_${ENV}_suffix
-ENV_NAME=environnements_${ENV}_name
+ENV_SUFFIX=environments_${ENV}_suffix
+ENV_NAME=environments_${ENV}_name
 
-# Parse files, replace and remove __ENV__ lines
+# Parse files, replace and remove __<ENV>__ lines
 #
 # $1 : __ENV__ pattern
 # $2 : file to modify
@@ -31,17 +36,13 @@ function update_env {
     done < $2
     #Remove all __ENV__ from current file
     sed -e "s/$1//g" -i "$2"
-     for i in ${environnements_list[*]}; do
-        env_suffix=environnements_${i}_suffix
+     for i in ${environments_list[*]}; do
+        env_suffix=environments_${i}_suffix
         sed -e "/${!env_suffix}/ d" -i "$2"
     done;
 }
 
 
-# Processing committed files
-printf "${Blue}Copying files in delivery directory and packing${Color_Off}\n"
-
-printf "${Blue}${!ENV_NAME}${Color_Off}\n"
 mkdir $DELIVER_FOLDER
 cp -r "${FOLDER_SRC}/." $DELIVER_FOLDER
 
@@ -54,9 +55,20 @@ for file in `find $DELIVER_FOLDER -name *${!ENV_SUFFIX}*`; do
         mv $file `echo $file | sed s/$${!ENV_SUFFIX}//g`;
 done
 
-cd $DELIVER_FOLDER
-tar cf "../${DELIVER_ARCHIVE}" *
-cd - > /dev/null
+type=environments_${ENV}_deploy_type
+case "${!type}" in
+    "pkg"|"package" )
+        cd $DELIVER_FOLDER
+        tar cf "../${DELIVER_ARCHIVE}" *
+        cd - > /dev/null
+        printf "${Green}Your packages are ready in $DELIVER_TOP_FOLDER${Color_Off}\n"
 
-printf "${Green}Your packages are ready in $DELIVER_TOP_FOLDER${Color_Off}\n"
+        shift
+    ;;
+    "src"|"sources" )
+        printf "${Green}Your sources are ready in $DELIVER_TOP_FOLDER${Color_Off}\n"
+        shift
+        ;;
+esac
+
 

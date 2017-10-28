@@ -110,12 +110,12 @@ while [[ ! $avail_envs =~ (^|,)$DEPLOY_ENV($|,) ]] ;do
 done
 
 if [ ! -d $DEPLOY_SOURCES ];then
-    printf "${Red}$DEPLOY_SOURCES doesn't exit. Please, run EurekaPackager.sh before ${Color_Off}\n"
+    printf "${Red}$DEPLOY_SOURCES doesn't exist. Please, run EurekaPackager.sh before ${Color_Off}\n"
     exit 1
 fi
 
 if [ ! -f $DEPLOY_PACKAGE ]; then
-    printf "${Red}$DEPLOY_PACKAGE doesn't exit. Please, run EurekaPackager.sh before ${Color_Off}\n"
+    printf "${Red}$DEPLOY_PACKAGE doesn't exist. Please, run EurekaPackager.sh before ${Color_Off}\n"
     exit 1
 fi
 

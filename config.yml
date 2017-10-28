@@ -10,7 +10,7 @@ parameters:
 
     suffix_format: _`date +'%Y%m%d'`
 
-environnements:
+environments:
   list:
     - prod
     - preprod
@@ -22,14 +22,21 @@ environnements:
     short: p
     suffix: __PROD__
     deploy:
-      user: smile
-      proxy_host: localhost
-      host: localhost
-      target: /var/www/
+      user: pi
+      host: retropie
+      proxy:
+        user: test
+        host: localhost
+
+      target: /var/www
       commands:
-        -
-          content : composer update
-          user: www-data
+        before_scripts:
+          - ls -alh
+          - pwd
+          - date
+        after_scripts :
+          - ls -alh
+          - date
       type: package
 
   preprod:
@@ -39,8 +46,8 @@ environnements:
     deploy:
       user: smile
       host: localhost
-      target: /var/www/
-      type: package
+      target: /var/www
+      type: src
 
   integ:
     short: i
@@ -49,7 +56,7 @@ environnements:
     deploy:
       user: smile
       host: localhost
-      target: /var/www/
+      target: /var/www
       type: sources
 
   recette:
@@ -59,7 +66,7 @@ environnements:
     deploy:
       user: recette
       host: localhost
-      target: /var/www/
+      target: /var/www
       type: sources
 
 

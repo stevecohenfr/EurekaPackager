@@ -15,18 +15,13 @@ Cyan='\033[0;36m'         # Cyan
 White='\033[0;37m'        # White
 # Script Infos
 SCRIPT_VERSION='0.6.1'
-SCRIPT_NAME='EurekaPackager'
-
-
-declare -a DELIVER_FOLDERS=($FOLDER_SRC"_integ" $FOLDER_SRC"_recette" $FOLDER_SRC"_preprod" $FOLDER_SRC"_prod")
-declare -a ENVS_AFFIXES=("__INTEG__" "__RECETTE__" "__PREPROD__" "__PROD__")
-declare -a ENVS=("INTEGRATION" "RECETTE" "PREPRODUCTION" "PRODUCTION")
-declare -a DELIVER_ARCHIVES=("INTEG_$NAME" "RECETTE_$NAME" "PREPROD_$NAME" "PROD_$NAME")
 
 #
 # YML parsing
 # $1 : .yml file
 # $2 : var name - prefix
+#
+# credits: https://github.com/jasperes/bash-yaml
 #
 function parse_yaml() {
     local yaml_file=$1
@@ -68,8 +63,8 @@ function create_variables() {
 #
 remove_packages() {
     echo
-    read -p "Remove package folder ?(Y/n) " -r
-    if [[ $REPLY =~ ^[Yy]$ ]] && [ ! $REPLY = "" ];then
+    read -p "Remove package folder '$DELIVER_TOP_FOLDER' ?(Y/n) " -r
+    if [[ $REPLY =~ ^[Yy]$ ]] || [[ $REPLY = "" ]];then
         rm -rf $DELIVER_TOP_FOLDER
     fi
 }

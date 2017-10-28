@@ -4,42 +4,6 @@ SCRIPT=`realpath -s $0`
 SCRIPTPATH=`dirname $SCRIPT`
 source "$SCRIPTPATH/lib/".common.sh
 
-# generate vars from yaml file
-create_variables config.yml
-
-
-check_config () {
-
-    if [[ ! " ${environnements_list[@]} " =~ " ${1} " ]]; then
-        echo "'${1}' is not declared in 'environnements_list'."
-        echo "Please provide it in 'conf.ym'l file."
-        echo "Quitting..."
-        exit 1
-    fi
-
-    config+=(parameters_project_name)
-    config+=(parameters_project_target_root)
-    config+=(parameters_delivery_folder_parent)
-    config+=(parameters_delivery_folder_sources)
-    config+=(parameters_delivery_suffix_format)
-    config+=(environnements_${1}_name)
-    config+=(environnements_${1}_short)
-    config+=(environnements_${1}_suffix)
-    config+=(environnements_${1}_deploy_user)
-    config+=(environnements_${1}_deploy_host)
-    config+=(environnements_${1}_deploy_type)
-    config+=(environnements_${1}_deploy_target)
-
-    for i in ${config[*]}; do
-        if [ -z ${!i} ];then
-            echo "'${i}' is unset or doesn't exist."
-            echo "Please check its existence and provide it in 'conf.ym'l file."
-            echo "Quitting..."
-            exit 1
-        fi;
-    done
-}
-
 
 #######################################
 ############### USAGE ################
@@ -48,8 +12,8 @@ check_config () {
 function show_usage {
     echo -e "--------------------------------------------------"
     echo -e "This script help you to create a delivery file"
-    echo -e "You can ONLY use this script with GIT"
-    echo -e "Developed by Steve Cohen (stcoh) for SMILE company"
+    echo -e "You can ONLY use this script with GIT and at Project root directory"
+    echo -e "Developed by Steve Cohen (stcoh) and Marek Necesany (manec) for SMILE company"
     echo -e "--------------------------------------------------"
     echo
     echo -e "Usage: $0 [OPTION]"
@@ -72,8 +36,6 @@ if [ "$#" -eq 0 ]; then
     show_usage
     exit
 fi
-
-declare -A COMMITS
 
 for i in "$@";do
     case $i in
@@ -107,32 +69,21 @@ for i in "$@";do
     esac
 done
 
-avail_shorts=''
-for i in ${environnements_list[*]}; do
-    env_short=environnements_${i}_short
-    if [[ -n ${ENV} ]] && [ $ENV == ${!env_short} ]; then
-        ENV=${i}
-    fi
-    avail_shorts+="${!env_short}|${i} / "
-done;
+# generate vars from yaml file
+create_variables config.yml
 
-while [[ ! " ${environnements_list[@]} " =~ " ${ENV} "  ]]  ;do
-    read -p "Deploy environement (  ${avail_shorts::-2} ) : " ENV
-    for i in ${environnements_list[*]}; do
-        env_short=environnements_${i}_short
-        if [[ -n ${ENV} ]] && [ $ENV == ${!env_short} ]; then
-            ENV=${i}
-        fi
-    done;
+# Checking provided configuration
+source "$SCRIPTPATH/lib/".config_checker.sh
 
-    if [[ ! " ${environnements_list[@]} " =~ " ${ENV} "  ]] ; then
-        printf "${Yellow}Invalid option. Please, choose between ${avail_shorts::-2}${Color_Off}\n"
-    fi
-done
+# Checking for committed files
+printf "${Blue}Processing provided git information ...${Color_Off}\n"
+source "$SCRIPTPATH/lib/.commit_manager.sh"
 
-check_config $ENV
+# Processing committed files
+printf "${Blue}Copying files in delivery directory for ${!ENV_NAME^^} environment...${Color_Off}\n"
+source "$SCRIPTPATH/lib/.packager.sh"
 
-source "$SCRIPTPATH/lib/".commit_manager.sh
-source "$SCRIPTPATH/lib/".packager.sh
-source "$SCRIPTPATH/lib/".deployer.sh
 
+
+printf "${Blue}Deploying...${Color_Off}\n"
+source "$SCRIPTPATH/lib/.deployer.sh"
