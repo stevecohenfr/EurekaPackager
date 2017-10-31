@@ -89,7 +89,7 @@ cat $tar_files >> $TMP_TAR
 # extract tmp archive in source dir
 mkdir ${FOLDER_SRC}
  if [ ! "$parameters_project_target_root" == "." ]; then
-    tar ixf $TMP_TAR -C ${FOLDER_SRC} --skip 1 "${parameters_project_target_root}/*"
+    tar ixf $TMP_TAR -C ${FOLDER_SRC} --strip-components=1 "${parameters_project_target_root}"
 else
     tar ixf $TMP_TAR -C ${FOLDER_SRC}
 fi
