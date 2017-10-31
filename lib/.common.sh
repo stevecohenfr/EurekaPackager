@@ -74,13 +74,15 @@ remove_packages() {
 # $1 : "Continue" Question string
 # -> exits script if user doesn't want to continue
 # -> returns "true" if user wants
-#
+# $2 : avoid asking if want to remove created dir with sources & package
 ask_continue() {
     read -p "$1" -r
     if [[ ! $REPLY =~ ^[Yy]$ ]] && [ ! $REPLY = "" ];then
         printf "${Red}Aborting.${Color_Off}\n"
-        remove_packages
-        exit 1
+        if [ -z $2 ];then
+            remove_packages
+        fi
+    exit 1
     else
         return 0
     fi

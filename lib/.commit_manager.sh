@@ -74,7 +74,7 @@ for COMMIT_LINE in "${SORTED_COMMITS[@]}"; do
 done
 echo "-----------------------------------------------------------------"
 
-rm -rf $DELIVER_TOP_FOLDER
+#rm -rf $DELIVER_TOP_FOLDER
 mkdir -p $TMP_DIR
 
 #temp tar archives for each commit
@@ -93,13 +93,12 @@ mkdir ${FOLDER_SRC}
 else
     tar ixf $TMP_TAR -C ${FOLDER_SRC}
 fi
-rm -rf $TMP_DIR
 
 
 printf "${Blue}Files list :${Color_Off}\n"
 echo "-----------------------------------------------------------------"
-find "${FOLDER_SRC}/" -type f
+tar itzf $TMP_TAR | awk -F/ '{ if($NF != "") print $NF }'
 echo "-----------------------------------------------------------------"
 printf "${Green}Files are ready for the packages in $FOLDER_SRC${Color_Off}\n"
-question="Continue ? (Y/n) "
-ask_continue "$question"
+
+rm -rf $TMP_DIR

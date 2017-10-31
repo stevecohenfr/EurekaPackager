@@ -78,12 +78,14 @@ source "$SCRIPTPATH/lib/".config_checker.sh
 # Checking for committed files
 printf "${Blue}Processing provided git information ...${Color_Off}\n"
 source "$SCRIPTPATH/lib/.commit_manager.sh"
+question="Continue ? (Y/n) "
+ask_continue "$question"
 
 # Processing committed files
 printf "${Blue}Copying files in delivery directory for ${!ENV_NAME^^} environment...${Color_Off}\n"
 source "$SCRIPTPATH/lib/.packager.sh"
-
-
+question="Continue to deploy ? (Y/n) "
+ask_continue "$question" "no"
 
 printf "${Blue}Deploying...${Color_Off}\n"
 source "$SCRIPTPATH/lib/.deployer.sh"
