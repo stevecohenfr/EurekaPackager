@@ -9,20 +9,20 @@ parameters:
       sources: #
     suffix_format: _`date +'%Y%m%d'`
 
-    environments:
-      list:
-        - prod
+environments:
+  list:
+    - prod
 
-      prod:
-        name: #
-        short: #
-        suffix: #
-        deploy:
-          type:  # src|sources/pkg|package
-          user:  #
-          host:  #
+  prod:
+    name: #
+    short: #
+    suffix: #
+    deploy:
+      type:  # src|sources/pkg|package
+      user:  #
+      host:  #
 #          pass: ***
-          target: #
+      target: #
 #          commands:
 #            before_scripts:
 #            after_scripts :
