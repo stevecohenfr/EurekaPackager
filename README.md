@@ -125,7 +125,7 @@ In the PROD package / sources you will only have :
 
 TODOs/ ideas :
 - code cleanups / refactors
-- ssh proxy support ([Proxies_and_Jump_Hosts)[https://en.wikibooks.org/wiki/OpenSSH/Cookbook/Proxies_and_Jump_Hosts) , [ssh hops]()https://sellarafaeli.wordpress.com/2014/03/24/copy-local-files-into-remote-server-through-n1-ssh-hops/)
+- ssh proxy support ([Proxies_and_Jump_Hosts](https://en.wikibooks.org/wiki/OpenSSH/Cookbook/Proxies_and_Jump_Hosts) , [ssh hops](https://sellarafaeli.wordpress.com/2014/03/24/copy-local-files-into-remote-server-through-n1-ssh-hops/))
 - self update script
 - fetch lib/.*.sh dependencies from web instead of having it locally
 - previous point add.: add a yml property letting to choose (web or local)
