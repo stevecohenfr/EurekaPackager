@@ -36,11 +36,12 @@ check_config () {
     done
 }
 
+declare -A avail_shorts
 
 for i in ${environments_list[*]}; do
     env_short=environments_${i}_short
     avail_options+="${!env_short}|${i} / "
-    avail_shorts+=(${!env_short})
+    avail_shorts[$i]=${!env_short}
     if [[ -n ${ENV} ]] && [[ " ${avail_shorts[@]} " =~ " ${ENV} " ]]; then
         ENV=${i}
     fi
@@ -57,7 +58,7 @@ while [[ ! " ${environments_list[@]} " =~ " ${ENV} "  ]] ;do
 
     read -p "Deploy environement (  ${avail_options::-2} ) : " ENV
     for i in ${environments_list[*]}; do
-        if [[ -n ${ENV} ]] && [[ " ${avail_shorts[@]} " =~ " ${ENV} " ]]; then
+        if [[ ${i} == ${ENV} ]] || [[ ${avail_shorts[$i]} == ${ENV} ]]; then
             ENV=${i}
         fi
     done;

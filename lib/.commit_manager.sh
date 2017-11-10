@@ -1,10 +1,6 @@
 #!/bin/bash
 
-if [ -z ${ENV} ];then
-    printf "${Red} this file is part of 'Eureka' script. Cannot be launched individualy
-    Quitting...${Color_Off}\n"
-    exit 1
-fi
+printf "${Blue}Processing provided git information ...${Color_Off}\n"
 
 declare -A COMMITS
 NAME="${parameters_project_name}${parameters_delivery_suffix_format}"
@@ -97,7 +93,7 @@ fi
 
 printf "${Blue}Files list :${Color_Off}\n"
 echo "-----------------------------------------------------------------"
-tar itzf $TMP_TAR | awk -F/ '{ if($NF != "") print $NF }'
+tar itzf $TMP_TAR | grep -v '\/$'
 echo "-----------------------------------------------------------------"
 printf "${Green}Files are ready for the packages in $FOLDER_SRC${Color_Off}\n"
 

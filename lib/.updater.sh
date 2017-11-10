@@ -6,7 +6,7 @@
 #######################################
 
 function check_update {
-    REMOTE_VERSION=`curl -sL https://rawgit.com/ReaperSoon/EurekaPackager/master/VERSION`
+    REMOTE_VERSION=`curl -sL https://rawgit.com/ReaperSoon/EurekaPackager/dev/VERSION`
 
     if [[ "$SCRIPT_VERSION" < "$REMOTE_VERSION" ]]; then
 	printf "${Yellow}Your script is deprecated (${SCRIPT_VERSION} < ${REMOTE_VERSION}). Please use -u or --upgrade${Color_Off}\n"
@@ -14,26 +14,40 @@ function check_update {
 }
 
 function self_upgrade {
-    DIST_SCRIPTS+=("https://rawgit.com/ReaperSoon/EurekaPackager/master/EurekaPackager.sh")
-    DIST_SCRIPTS+=("https://rawgit.com/ReaperSoon/EurekaPackager/master/lib/*")
+    # TODO : for each required file - local filename
+
+    DIST_SCRIPTS+=("https://rawgit.com/ReaperSoon/EurekaPackager/dev/EurekaPackager.sh")
+    DIST_SCRIPTS+=("https://rawgit.com/ReaperSoon/EurekaPackager/dev/lib/.commit_manager.sh")
+    DIST_SCRIPTS+=("https://rawgit.com/ReaperSoon/EurekaPackager/dev/lib/.common.sh")
+    DIST_SCRIPTS+=("https://rawgit.com/ReaperSoon/EurekaPackager/dev/lib/.config_checker.sh")
+    DIST_SCRIPTS+=("https://rawgit.com/ReaperSoon/EurekaPackager/dev/lib/.deployer.sh")
+    DIST_SCRIPTS+=("https://rawgit.com/ReaperSoon/EurekaPackager/dev/lib/.packager.sh")
+    DIST_SCRIPTS+=("https://rawgit.com/ReaperSoon/EurekaPackager/dev/lib/.updater.sh")
 
     # Download new version
     printf "${Green}Downloading latest version...${Color_Off}\n"
-    if ! wget --quiet --output-document="$0.tmp" $DIST_SCRIPT ; then
-	printf "${Red}Failed: Error while trying to wget new version!${Color_Off}\n"
-	printf "${Red}File requested: ${DIST_SCRIPT}${Color_Off}\n"
-	exit 1
-    fi
+    file_counter=0
+    for i in ${DIST_SCRIPTS[*]}; do
+        if ! wget --quiet --output-document="$file_counter.tmp" ${i} ; then
+            printf "${Red}Failed: Error while trying to wget new version!${Color_Off}\n"
+            printf "${Red}File requested: ${i}${Color_Off}\n"
+            exit 1
+        fi
+
+           # Copy over modes from old version
+        OCTAL_MODE=$(stat -c '%a' ${file_counter})
+        if ! chmod $OCTAL_MODE "$file_counter.tmp" ; then
+            printf "${Red}Failed: Error while trying to set mode on $file_counter.tmp.${Color_Off}\n"
+            exit 1
+        fi
+    done;
+
     printf "${Green}Done.${Color_Off}\n"
 
-    # Copy over modes from old version
-    OCTAL_MODE=$(stat -c '%a' $0)
-    if ! chmod $OCTAL_MODE "$0.tmp" ; then
-	printf "${Red}Failed: Error while trying to set mode on $0.tmp.${Color_Off}\n"
-	exit 1
-    fi
+
 
     # Spawn update script
+    # TODO : for each required file
     cat > .updatescript.sh << EOF
 #!/bin/bash
 # Overwrite old file with new

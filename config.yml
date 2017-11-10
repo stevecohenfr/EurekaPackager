@@ -47,7 +47,7 @@ environments:
       user: smile
       host: localhost
       target: /var/www
-      type: src
+      type: pkg
 
   integ:
     short: i

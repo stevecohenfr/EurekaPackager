@@ -1,10 +1,6 @@
 #!/bin/bash
 
-if [ -z ${ENV} ];then
-    printf "${Red} this file is part of 'Eureka' script. Cannot be launched individualy
-    Quitting...${Color_Off}\n"
-    exit 1
-fi
+printf "${Blue}Copying files in delivery directory for ${!ENV_NAME^^} environment...${Color_Off}\n"
 
 DELIVER_FOLDER=${FOLDER_SRC}_${ENV}
 DELIVER_ARCHIVE="${ENV^^}_${NAME}.tar.gz"
@@ -51,24 +47,23 @@ for file in `find $DELIVER_FOLDER -type f`; do
 done
 
 for file in `find $DELIVER_FOLDER -name *${!ENV_SUFFIX}*`; do
-        rm `echo $file | sed s/$${!ENV_SUFFIX}//g`;
-        mv $file `echo $file | sed s/$${!ENV_SUFFIX}//g`;
+    rm `echo $file | sed s/$${!ENV_SUFFIX}//g`;
+    mv $file `echo $file | sed s/$${!ENV_SUFFIX}//g`;
 done
 
 type=environments_${ENV}_deploy_type
 case "${!type}" in
     "pkg"|"package" )
         cd $DELIVER_FOLDER
-        tar cf "../${DELIVER_ARCHIVE}" *
+        tar zcf "../${DELIVER_ARCHIVE}" *
         cd - > /dev/null
         printf "${Green}Your packages are ready in $DELIVER_TOP_FOLDER${Color_Off}\n"
-
         shift
     ;;
     "src"|"sources" )
         printf "${Green}Your sources are ready in $DELIVER_TOP_FOLDER${Color_Off}\n"
         shift
-        ;;
+    ;;
 esac
 
 

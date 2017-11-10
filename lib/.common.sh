@@ -14,7 +14,7 @@ Purple='\033[0;35m'       # Purple
 Cyan='\033[0;36m'         # Cyan
 White='\033[0;37m'        # White
 # Script Infos
-SCRIPT_VERSION='0.6.1'
+SCRIPT_VERSION='0.7'
 
 #
 # YML parsing
@@ -85,5 +85,20 @@ ask_continue() {
     exit 1
     else
         return 0
+    fi
+}
+
+
+# Save var to tmp file
+# $1 : variable name
+# $2 : same var's value
+#
+save_or_update_tmp() {
+    if grep -q $1 "$TMP_FILE";then
+        tmp=$(echo $2 | sed 's./.\\/.g')
+        sed_param=s/${1}=.*/${1}=$tmp/
+        sed -i "$sed_param" "$TMP_FILE"
+    else
+        echo "$1=$2" >> "$TMP_FILE"
     fi
 }
