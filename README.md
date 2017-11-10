@@ -1,4 +1,6 @@
-## EurekaPackager - Delivery system with GIT
+# EurekaPackager
+
+## Delivery system with GIT
 
 This script allows you to deliver a tar package or sources on a server.
 
@@ -34,7 +36,7 @@ Available Options:
 | -c= / --commit=<SHA1 commit>                     	| use the commit sha1 to get files                                  	|             Yes (no if message provided) 	|
 | -m= / --message=<message to search in a commit > 	| search a commit using a part of the commit message                	|             Yes (no if commit provided)   |
 | -e= / --env=<env short or full name>             	| Create package for specific environment provided in conf.yml file 	|             no (asked if not provided)    |
-| *(in developement: )-u / --upgrade*              	| *self upgrade*                                                      	|             no             	            |
+| *(in progress: )-u / --upgrade*               	| *self upgrade*                                                      	|             no             	            |
 | -h / --help                                     	| show help                                                         	|             no             	            |
 | -v / --version                                  	| show the script version                                           	|             no             	            |
 
@@ -48,7 +50,7 @@ A configuration in a 'config.yml' file is needed.
 This file should be located at the project's root location
 (or at the same path where the script is executed)
 
-It's organized as follows :
+It's organized as follows (a skeleton.yml is provided, to copy, rename as 'confi.yml' and fulfill):
 
 ```yaml
 parameters:  # all config container
@@ -121,9 +123,9 @@ In the PROD package / sources you will only have :
 
 ---
 
-TODOs :
+TODOs/ ideas :
 - code cleanups / refactors
-- ssh proxy support
+- ssh proxy support ([Proxies_and_Jump_Hosts)[https://en.wikibooks.org/wiki/OpenSSH/Cookbook/Proxies_and_Jump_Hosts) , [ssh hops]()https://sellarafaeli.wordpress.com/2014/03/24/copy-local-files-into-remote-server-through-n1-ssh-hops/)
 - self update script
 - fetch lib/.*.sh dependencies from web instead of having it locally
 - previous point add.: add a yml property letting to choose (web or local)

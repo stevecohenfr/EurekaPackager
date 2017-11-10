@@ -81,6 +81,13 @@ for i in "$@";do
     esac
 done
 
+if [ ! -f "config.yml" ]; then
+    printf "${Red}The configuration file 'config.yml' doesn't exist.
+    Please, create and fulfill it.
+    Quitting...${Color_Off}\n"
+    exit 1
+fi
+
 # generate vars from yaml file
 create_variables config.yml
 
