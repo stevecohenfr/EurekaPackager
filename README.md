@@ -62,7 +62,7 @@ parameters:  # all config container
       sources: src       # source 'parent' sub-folder name
 
     suffix_format: _`date +'%Y%m%d'` # suffix to identify the deliveries
-    # Will be used at the end of the package name (eg: My_Project_yyyymmdd.tar.gz)
+    # Will be also used at the end of the package name (eg: My_Project_yyyymmdd.tar.gz)
 
 
     environments:
@@ -72,7 +72,7 @@ parameters:  # all config container
         - integ
         - recette
 
-      prod:               # each environnement listed above has following config. The key must be the same as
+      prod:               # each environnement has following config. The key must be the same as listed above
         name: Production  # Env full name
         short: p          # shortcut to use in argument or if asked
         suffix: __PROD__  # For env specific lines *
@@ -95,6 +95,14 @@ parameters:  # all config container
               - ls -alh
               - date
 
+      prod : # each provided env in list property must have it's config
+      ...
+      preprod : # each defined env must be in the list property
+      ...
+      integ :
+      ...
+      recette :
+      ...
 ```
 
 \* enviroments_\<env>_suffix property : Environment specific variable affectation
@@ -102,11 +110,22 @@ parameters:  # all config container
 :warning: All other occurrences of this var init and their entire line will be erased
 
 for example: if your project has this affectation
-myvar=dummy
-myvar__TEST__=dummy_test
-myvar__STAG__=dummy_staging
-myvar__REL__=dummy_release
-myvar__PROD__=dummy_prod
 
-In the PROD package you will only have :
-myvar=dummy_prod
+    myvar=dummy
+    myvar__TEST__=dummy_test
+    myvar__STAG__=dummy_staging
+    myvar__REL__=dummy_release
+    myvar__PROD__=dummy_prod
+
+In the PROD package / sources you will only have :
+
+    myvar=dummy_prod
+
+---
+
+TODOs :
+- code cleanups / refactors
+- ssh proxy support
+- self update script
+- fetch lib/.*.sh dependencies from web instead of having it locally
+- previous point add.: add a yml property letting to choose (web or local)
