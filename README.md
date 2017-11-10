@@ -72,10 +72,10 @@ parameters:  # all config container
         - integ
         - recette
 
-      prod:               # each environnement has following config. The key must be the same as listed above
+      prod:               # each environnement has the following config
         name: Production  # Env full name
         short: p          # shortcut to use in argument or if asked
-        suffix: __PROD__  # For env specific lines *
+        suffix: __PROD__  # For env specific lines*
         deploy:
           type: src|sources/pkg|package # type of the delivery to deploy
           user:  test                   # user allowed to deploy on server
@@ -95,13 +95,11 @@ parameters:  # all config container
               - ls -alh
               - date
 
-      prod : # each provided env in list property must have it's config
+      preprod : # The key must be the same as provided in the list
       ...
-      preprod : # each defined env must be in the list property
+      integ : # each provided env in list property must have it's config
       ...
-      integ :
-      ...
-      recette :
+      recette : # each defined env must be in the list property
       ...
 ```
 
