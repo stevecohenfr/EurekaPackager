@@ -97,7 +97,7 @@ parameters:  # all config container
 
 ```
 
-\* enviroments_<env>_suffix property : Environment specific variable affectation
+\* enviroments_\<env>_suffix property : Environment specific variable affectation
 
 :warning: All other occurrences of this var init and their entire line will be erased
 
