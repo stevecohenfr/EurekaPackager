@@ -88,7 +88,7 @@ parameters:  # all config container
             host: localhost
 
           target: /var/www # Target where to deliver the target or sources
-          commands: # (optional) lists of commands to execute before
+          commands: # (optional & experimental : commands with arguments with "--" prefixes errored) lists of commands to execute before
             before_scripts:
               - ls -alh
               - pwd
@@ -124,8 +124,9 @@ In the PROD package / sources you will only have :
 ---
 
 TODOs/ ideas :
+- fix double-dash escape before command arguments in before/after
 - code cleanups / refactors
-- ssh proxy support ([Proxies_and_Jump_Hosts](https://en.wikibooks.org/wiki/OpenSSH/Cookbook/Proxies_and_Jump_Hosts) , [ssh hops](https://sellarafaeli.wordpress.com/2014/03/24/copy-local-files-into-remote-server-through-n1-ssh-hops/))
+- ssh proxy hops support ([Proxies_and_Jump_Hosts](https://en.wikibooks.org/wiki/OpenSSH/Cookbook/Proxies_and_Jump_Hosts) , [ssh hops](https://sellarafaeli.wordpress.com/2014/03/24/copy-local-files-into-remote-server-through-n1-ssh-hops/))
 - self update script
 - fetch lib/.*.sh dependencies from web instead of having it locally
 - previous point add.: add a yml property letting to choose (web or local)
