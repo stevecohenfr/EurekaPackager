@@ -32,6 +32,7 @@ question="Execution of "
 
 #before scripts prepare
 before_scripts=environments_${ENV}_deploy_commands_before_scripts
+
 if [[ -n "${!before_scripts}" ]]; then
     bf_script="cd ${!target};"
     before_scripts=${before_scripts}[@]

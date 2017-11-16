@@ -21,8 +21,8 @@ environments:
       type:  # src|sources/pkg|package
       user:  #
       host:  #
-#          pass: ***
+#      pass: ***
       target: #
-#          commands:
-#            before_scripts:
-#            after_scripts :
+#      commands:
+#        before_scripts:
+#        after_scripts :

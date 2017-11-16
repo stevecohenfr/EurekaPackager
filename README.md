@@ -124,7 +124,6 @@ In the PROD package / sources you will only have :
 ---
 
 TODOs/ ideas :
-- fix double-dash escape before command arguments in before/after scripts
 - code cleanups / refactors
 - ssh proxy hops support ([Proxies_and_Jump_Hosts](https://en.wikibooks.org/wiki/OpenSSH/Cookbook/Proxies_and_Jump_Hosts) , [ssh hops](https://sellarafaeli.wordpress.com/2014/03/24/copy-local-files-into-remote-server-through-n1-ssh-hops/))
 - self update script
