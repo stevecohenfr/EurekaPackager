@@ -23,7 +23,7 @@ case "${!type}" in
         shift
         ;;
     "src"|"sources" )
-        DEPLOY_COMMAND="rsync -avz --human-readable $DELIVER_TOP_FOLDER/$DELIVER_FOLDER/ $destination"
+        DEPLOY_COMMAND="rsync -avz --human-readable $DELIVER_FOLDER/ $destination"
         shift
         ;;
 esac

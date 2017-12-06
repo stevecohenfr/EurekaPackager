@@ -35,7 +35,7 @@ function parse_yaml() {
     fs="$(echo @|tr @ '\034')"
 
     (
-        sed -ne 's/\"/\\\"/g; s/\#.*//g; s/\s*$//g;' \
+        sed -ne 's/\"/\\\"/g; s/\ #.*//g; s/\s*$//g;' \
             -e  "s|^\($s\)\($w\)$s:$s\"\(.*\)\"$s\$|\1$fs\2$fs\3|p" \
             -e "s|^\($s\)\($w\)$s[:-]$s\(.*\)$s\$|\1$fs\2$fs\3|p" |
         awk -F"$fs" '{
@@ -60,6 +60,7 @@ function create_variables() {
 
 #
 # Asks if user wants to remove the local delivery prepared folder
+# - prereq.: global var must be initialized $DELIVER_TOP_FOLDER
 #
 remove_packages() {
     echo
@@ -89,7 +90,7 @@ ask_continue() {
 }
 
 
-# Save var to tmp file
+# Save var to tmp file (global var $TMP_FILE must be initialized)
 # $1 : variable name
 # $2 : same var's value
 #

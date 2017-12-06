@@ -32,7 +32,7 @@ function update_env {
     done < $2
     #Remove all __ENV__ from current file
     sed -e "s/$1//g" -i "$2"
-     for i in ${environments_list[*]}; do
+    for i in ${environments_list[*]}; do
         env_suffix=environments_${i}_suffix
         sed -e "/${!env_suffix}/ d" -i "$2"
     done;
