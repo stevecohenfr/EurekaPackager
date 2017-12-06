@@ -27,8 +27,13 @@ if [[ ! ${MESSAGE} == '' ]]; then
             echo "-----------------------------------------------------------------"
             echo "${COMMIT_LINES}"
             echo "-----------------------------------------------------------------"
-            question="Is this the commit/Are these the commits you want to deliver ?(Y/n) "
-            if ask_continue "$question";then
+            proceed=0
+            if [[ -n "$interactive" ]]; then
+                question="Is this the commit/Are these the commits you want to deliver ?(Y/n) "
+                proceed=$(ask_continue "$question")
+            fi
+
+            if [[ proceed ]];then
                 for COMMIT_LINE in "$COMMIT_LINES"; do
                     commit=`echo "${COMMIT_LINE}" | awk '{print $1}'`
                     COMMIT+=$(echo -e "\n${commit}")

@@ -41,13 +41,10 @@ if [[ -n "${!before_scripts}" ]]; then
         bf_script+="$i;"
     done
 
-    question+="
-    '$bf_script'
-then "
+    printf "\t${Green}[before-script]${Color_Off}\t${bf_script} \n"
 fi
 
-question+="
-    '${DEPLOY_COMMAND}' "
+printf "\t${Green}[sync-script]${Color_Off}\t${DEPLOY_COMMAND} \n"
 
 #after scripts prepare
 after_scripts=environments_${ENV}_deploy_commands_after_scripts
@@ -58,15 +55,13 @@ if [[ -n "${!after_scripts}" ]]; then
     for i in "${!after_scripts}";do
         af_script+="$i;"
     done
-
-    question+="
-and finaly
-    '$af_script'"
+    printf "\t${Green}[after-script]${Color_Off}\t${af_script} \n"
 fi
 
-question+="
-at '$ssh_host'. Proceed ? (Y/n) "
-ask_continue "$question"
+if [[ -n "$interactive" ]];then
+    question+="Proceed ? (Y/n)"
+    ask_continue "$question"
+fi
 
 
 # deployment

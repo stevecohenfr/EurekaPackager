@@ -13,7 +13,10 @@ ENV_NAME=environments_${ENV}_name
 # $2 : file to modify
 #
 function update_env {
-    echo "*** Updating $2 ***"
+    if [[ -z verbose ]]; then
+        echo "*** Updating $2 ***"
+    fi
+
     while IFS='' read -r line || [[ -n "$line" ]]; do
         if [[ $line == *"$1"* ]]; then
             #Get normal key without __ENV__
@@ -21,7 +24,7 @@ function update_env {
             l=0
             while IFS='' read -r line2 || [[ -n "$line2" ]]; do
                 ((l++))
-                if [[ $line2 == "${normal_key}="* ]]; then
+                if [[ -z verbose ]] && [[ $line2 == "${normal_key}="* ]]; then
                     #Remove curent line
                     echo "Removing LXC variable at line $l : ${line2}"
                     sed "${l}d" -i "$2"
