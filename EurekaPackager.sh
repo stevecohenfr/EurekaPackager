@@ -40,7 +40,6 @@ function show_usage {
 
 
 
-
 ####################
 ###  CHECK ARGS  ###
 ####################
@@ -60,6 +59,10 @@ for i in "$@";do
         ;;
         -m=*|--message=*)
         MESSAGE=$(echo -e "${MESSAGE}\n${i#*=}")
+        shift
+        ;;
+        -b=*|--branch=*)
+        BRANCH=$(echo -e "${i#*=}")
         shift
         ;;
         -e=*|--env=*)
@@ -107,6 +110,13 @@ source "$SCRIPTPATH/lib/.updater.sh"
 
 # Checking provided configuration
 source "$SCRIPTPATH/lib/.config_checker.sh"
+
+if [[ -z "$BRANCH" ]]; then
+    # Checking for committed files
+    source "$SCRIPTPATH/lib/.commit_manager.sh"
+else
+    source "$SCRIPTPATH/lib/.branch_manager.sh"
+fi
 
 # Checking for committed files
 source "$SCRIPTPATH/lib/.commit_manager.sh"
