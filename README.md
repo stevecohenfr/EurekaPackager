@@ -47,10 +47,17 @@ commit and message options can be used together and several times :
 
     $ <path/to/scrips>/EurekaPackager.sh -c=c123 -m=atag -c=c5654789 -m=Create
 
-branch option can only be used once. Any commit or message options will be ignored.
+The branch option can only be used once. Any commit or message options will be ignored.
 
-    $ <path/to/scrips>/EurekaPackager.sh -c -b=c123 -m=atag -c=c5654789 -m=Create
+    $ <path/to/scrips>/EurekaPackager.sh -b -c=c123 -m=atag -c=c5654789 -m=Create
 
+will have same result as
+
+    $ <path/to/scrips>/EurekaPackager.sh -b
+
+and will get the differences between the current branch
+and the branch set in 'origin_branch' parameter in config.yml
+(if not set, default origin branch is 'master')
 
 #### Configuration
 
