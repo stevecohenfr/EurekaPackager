@@ -40,11 +40,7 @@ if [[ -n "${!before_scripts}" ]]; then
     for i in "${!before_scripts}";do
         bf_script+="$i;"
     done
-
-    printf "\t${Green}[before-script]${Color_Off}\t${bf_script} \n"
 fi
-
-printf "\t${Green}[sync-script]${Color_Off}\t${DEPLOY_COMMAND} \n"
 
 #after scripts prepare
 after_scripts=environments_${ENV}_deploy_commands_after_scripts
@@ -55,14 +51,12 @@ if [[ -n "${!after_scripts}" ]]; then
     for i in "${!after_scripts}";do
         af_script+="$i;"
     done
-    printf "\t${Green}[after-script]${Color_Off}\t${af_script} \n"
 fi
 
-if [[ -n "$interactive" ]];then
-    question+="Proceed ? (Y/n)"
+if [[ $interact ]];then
+    question="Proceed ? (Y/n)"
     ask_continue "$question"
 fi
-
 
 # deployment
 if [[ -n "${!pass}" ]]; then
@@ -70,11 +64,14 @@ if [[ -n "${!pass}" ]]; then
 fi
 
 if [[ -n "${!before_scripts}" ]]; then
+    printf "\t${Green}[before-script]${Color_Off}\t${bf_script} \n"
     ssh $ssh_host $bf_script
 fi
 
+printf "\t${Green}[sync-script]${Color_Off}\t${DEPLOY_COMMAND} \n"
 eval ${DEPLOY_COMMAND}
 
 if [[ -n "${!after_scripts}" ]]; then
+    printf "\t${Green}[after-script]${Color_Off}\t${af_script} \n"
     ssh $ssh_host $af_script
 fi

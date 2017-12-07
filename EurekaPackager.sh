@@ -66,12 +66,12 @@ for i in "$@";do
         ENV="${i#*=}"
         shift
         ;;
-        -i|--interactive)
-        interactive=1
+        -i|--interact)
+        interact=0
         shift
         ;;
         -vv|--verbose)
-        verbose=1
+        verbose=0
         shift
         ;;
         -u|--upgrade)
@@ -110,14 +110,14 @@ source "$SCRIPTPATH/lib/.config_checker.sh"
 
 # Checking for committed files
 source "$SCRIPTPATH/lib/.commit_manager.sh"
-if [[ -n "$interactive" ]];then
+if [[ $interact ]];then
     question="Continue ? (Y/n) "
     ask_continue "$question"
 fi
 
 # Processing committed files
 source "$SCRIPTPATH/lib/.packager.sh"
-if [[ -n "$interactive" ]];then
+if [[ $interact ]];then
     question="Proceed to deploy ? (Y/n) "
     ask_continue "$question" "no"
 fi
