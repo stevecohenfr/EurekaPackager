@@ -12,7 +12,7 @@ source "$SCRIPTPATH/lib/.common.sh"
 
 echo
 printf "${Cyan}This script helps you to deliver a tar package or sources of changes in a project ${Color_Off}\n"
-printf "${Cyan}It will ask you information to confirm what you provided in arguments and in the config file${Color_Off}\n"
+printf "${Cyan}If interactive mode set, it will ask you information to confirm what you provided in arguments and in the config file${Color_Off}\n"
 echo
 
 #############
@@ -32,9 +32,12 @@ function show_usage {
     echo -e "  -m, --message=<commit message>\t\t search a commit using a part of the commit message"
     echo -e "  -e,  --env=<environment>\t\t\t Create package for specific environement"
     echo -e "  -u,  --upgrade\t\t\t self-upgrade the script"
+    echo -e "  -i, --interact\t\t\t interaction mode : questions asked"
     echo -e "  -h,  --help\t\t\t\t show this help"
     echo -e "  -v,  --version\t\t\t show the script version"
+    echo -e "  -vv,  --verbose\t\t\t show the script version"
 }
+
 
 
 
@@ -61,6 +64,14 @@ for i in "$@";do
         ;;
         -e=*|--env=*)
         ENV="${i#*=}"
+        shift
+        ;;
+        -i|--interact)
+        interact=0
+        shift
+        ;;
+        -vv|--verbose)
+        verbose=0
         shift
         ;;
         -u|--upgrade)
@@ -99,12 +110,16 @@ source "$SCRIPTPATH/lib/.config_checker.sh"
 
 # Checking for committed files
 source "$SCRIPTPATH/lib/.commit_manager.sh"
-question="Continue ? (Y/n) "
-ask_continue "$question"
+if [[ $interact ]];then
+    question="Continue ? (Y/n) "
+    ask_continue "$question"
+fi
 
 # Processing committed files
 source "$SCRIPTPATH/lib/.packager.sh"
-question="Proceed to deploy ? (Y/n) "
-ask_continue "$question" "no"
+if [[ $interact ]];then
+    question="Proceed to deploy ? (Y/n) "
+    ask_continue "$question" "no"
+fi
 
 source "$SCRIPTPATH/lib/.deployer.sh"

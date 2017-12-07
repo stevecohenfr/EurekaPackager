@@ -27,8 +27,11 @@ if [[ ! ${MESSAGE} == '' ]]; then
             echo "-----------------------------------------------------------------"
             echo "${COMMIT_LINES}"
             echo "-----------------------------------------------------------------"
+
             question="Is this the commit/Are these the commits you want to deliver ?(Y/n) "
-            if ask_continue "$question";then
+            [[ $interact ]] && proceed=$(ask_continue "$question") || proceed=0
+
+            if [[ proceed ]];then
                 for COMMIT_LINE in "$COMMIT_LINES"; do
                     commit=`echo "${COMMIT_LINE}" | awk '{print $1}'`
                     COMMIT+=$(echo -e "\n${commit}")
@@ -38,11 +41,6 @@ if [[ ! ${MESSAGE} == '' ]]; then
     done
 fi
 
-# No Commit found -> Quit
-if [[ ${COMMIT} == '' ]]; then
-    printf "${Red}Sorry, no commit to pack. Quitting...${Color_Off}\n"
-    exit 1
-fi
 
 # List commits in map array
 for commit in $COMMIT; do
@@ -50,9 +48,16 @@ for commit in $COMMIT; do
         commit_key=`git log -1  --pretty=format:"%ai %H" ${commit}`
         COMMITS[$commit_key]=`git log -1  --pretty=format:"%ai %h %s" ${commit}`
     else
-       printf "${Red}Commit ${commit} doesn't exist ...${Color_Off}\n\n"
+       printf "${Red}Commit '${commit}' doesn't exist ...${Color_Off}\n\n"
     fi
 done
+
+# No Commit found -> Quit
+if [[ ${!COMMITS[*]} == '' ]]; then
+    printf "${Red}Sorry, no commit to pack. Quitting...${Color_Off}\n"
+    exit 1
+fi
+
 
 # Sort commits by date
 IFS=$'\n' SORTED_COMMITS=($(sort -u <<<"${!COMMITS[*]}"))
@@ -70,7 +75,7 @@ for COMMIT_LINE in "${SORTED_COMMITS[@]}"; do
 done
 echo "-----------------------------------------------------------------"
 
-#rm -rf $DELIVER_TOP_FOLDER
+rm -rf $DELIVER_TOP_FOLDER
 mkdir -p $TMP_DIR
 
 #temp tar archives for each commit

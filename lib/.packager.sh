@@ -13,7 +13,10 @@ ENV_NAME=environments_${ENV}_name
 # $2 : file to modify
 #
 function update_env {
-    echo "*** Updating $2 ***"
+    if [[ -z verbose ]]; then
+        echo "*** Updating $2 ***"
+    fi
+
     while IFS='' read -r line || [[ -n "$line" ]]; do
         if [[ $line == *"$1"* ]]; then
             #Get normal key without __ENV__
@@ -22,8 +25,8 @@ function update_env {
             while IFS='' read -r line2 || [[ -n "$line2" ]]; do
                 ((l++))
                 if [[ $line2 == "${normal_key}="* ]]; then
-                    #Remove curent line
-                    echo "Removing LXC variable at line $l : ${line2}"
+                    [[ $verbose ]] && echo "Removing LXC variable at line $l : ${line2}"
+                    #Remove current line
                     sed "${l}d" -i "$2"
                     break;
                 fi
@@ -37,7 +40,6 @@ function update_env {
         sed -e "/${!env_suffix}/ d" -i "$2"
     done;
 }
-
 
 mkdir $DELIVER_FOLDER
 cp -r "${FOLDER_SRC}/." $DELIVER_FOLDER

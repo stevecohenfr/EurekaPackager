@@ -40,11 +40,15 @@ declare -A avail_shorts
 
 for i in ${environments_list[*]}; do
     env_short=environments_${i}_short
+    [[ -z ${!env_short} ]] &&
+        printf "\t${Yellow}The '${i}' env is listed but not (or not fully) configured.
+        Please check its correct configuration in the 'conf.ym'l file.
+        Otherwise, some features may function badly.
+        ${Color_Off}" && ask_continue "Continue (y/n) ?" "no"
+
     avail_options+="${!env_short}|${i} / "
     avail_shorts[$i]=${!env_short}
-    if [[ -n ${ENV} ]] && [[ " ${avail_shorts[@]} " =~ " ${ENV} " ]]; then
-        ENV=${i}
-    fi
+    [[ -n ${ENV} ]] && [[ " ${avail_shorts[@]} " =~ " ${ENV} " ]] && ENV=${i}
 done;
 
 if [[ -n ${ENV} ]] && [[ ! " ${environments_list[@]} " =~ " ${ENV} "  ]] ; then

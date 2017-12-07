@@ -33,12 +33,14 @@ Available Options:
 
 |                     Option                     	|                               Detail                              	|          Required          	            |
 |:----------------------------------------------:	|:-----------------------------------------------------------------:	|:--------------------------:	            |
-| -c= / --commit=<SHA1 commit>                     	| use the commit sha1 to get files                                  	|             Yes (no if message provided) 	|
+| -c= / --commit=<SHA1 commit>                     	| use the commit sha1 (short or long) to get files                      |             Yes (no if message provided) 	|
 | -m= / --message=<message to search in a commit > 	| search a commit using a part of the commit message                	|             Yes (no if commit provided)   |
 | -e= / --env=<env short or full name>             	| Create package for specific environment provided in conf.yml file 	|             no (asked if not provided)    |
 | *(in progress: )-u / --upgrade*               	| *self upgrade*                                                      	|             no             	            |
 | -h / --help                                     	| show help                                                         	|             no             	            |
 | -v / --version                                  	| show the script version                                           	|             no             	            |
+| -i / --interact                                  	| interactive mode. Not enabled by default                              |             no             	            |
+| -vv / --verbose                                  	| verbosity : more information provided during process (in progress)    |             no             	            |
 
 commit and message options can be used together and several times :
 

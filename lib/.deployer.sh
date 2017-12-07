@@ -28,8 +28,6 @@ case "${!type}" in
         ;;
 esac
 
-question="Execution of "
-
 #before scripts prepare
 before_scripts=environments_${ENV}_deploy_commands_before_scripts
 
@@ -40,14 +38,7 @@ if [[ -n "${!before_scripts}" ]]; then
     for i in "${!before_scripts}";do
         bf_script+="$i;"
     done
-
-    question+="
-    '$bf_script'
-then "
 fi
-
-question+="
-    '${DEPLOY_COMMAND}' "
 
 #after scripts prepare
 after_scripts=environments_${ENV}_deploy_commands_after_scripts
@@ -58,28 +49,24 @@ if [[ -n "${!after_scripts}" ]]; then
     for i in "${!after_scripts}";do
         af_script+="$i;"
     done
-
-    question+="
-and finaly
-    '$af_script'"
 fi
 
-question+="
-at '$ssh_host'. Proceed ? (Y/n) "
-ask_continue "$question"
+printf "${Blue}The following commands will be executed (server side): ${Color_Off}\n"
 
+[[ -n "${!before_scripts}" ]] && printf "\t${Green}[before-script]${Color_Off}\t${bf_script} \n"
+printf "\t${Green}[sync-script]${Color_Off}\t${DEPLOY_COMMAND} \n"
+[[ -n "${!after_scripts}" ]] && printf "\t${Green}[after-script]${Color_Off}\t${af_script} \n"
+
+if [[ $interact ]];then
+    question="Proceed ? (Y/n)"
+    ask_continue "$question"
+fi
 
 # deployment
-if [[ -n "${!pass}" ]]; then
-    echo "ssh password: ${!pass}"
-fi
+[[ -n "${!pass}" ]] && echo "ssh password: ${!pass}"
 
-if [[ -n "${!before_scripts}" ]]; then
-    ssh $ssh_host $bf_script
-fi
+[[ -n "${!before_scripts}" ]] && ssh $ssh_host $bf_script
 
 eval ${DEPLOY_COMMAND}
 
-if [[ -n "${!after_scripts}" ]]; then
-    ssh $ssh_host $af_script
-fi
+[[ -n "${!after_scripts}" ]] && ssh $ssh_host $af_script
