@@ -17,6 +17,7 @@ environments:
     name: #
     short: #
     suffix: #
+    origin_branch: #
     deploy:
       type:  # src|sources/pkg|package
       user:  #

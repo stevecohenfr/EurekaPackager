@@ -31,13 +31,13 @@ function show_usage {
     echo -e "  -c, --commit=<commit SHA1>\t\t use the commit sha1 to get files"
     echo -e "  -m, --message=<commit message>\t\t search a commit using a part of the commit message"
     echo -e "  -e,  --env=<environment>\t\t\t Create package for specific environement"
+    echo -e "  -b,  --branch\t\t\t create package/delivery files from a branch. Current if none specified as follows '-b=word in branch name'"
     echo -e "  -u,  --upgrade\t\t\t self-upgrade the script"
     echo -e "  -i, --interact\t\t\t interaction mode : questions asked"
     echo -e "  -h,  --help\t\t\t\t show this help"
     echo -e "  -v,  --version\t\t\t show the script version"
     echo -e "  -vv,  --verbose\t\t\t show the script version"
 }
-
 
 
 
@@ -66,6 +66,12 @@ for i in "$@";do
         ENV="${i#*=}"
         shift
         ;;
+        -b|--branch)
+        BRANCH='\*'
+        ;;
+        -b=*|--branch=*)
+        BRANCH=$(echo -e "${i#*=}")
+        ;;
         -i|--interact)
         interact=0
         shift
@@ -93,7 +99,7 @@ for i in "$@";do
 done
 
 if [ ! -f "config.yml" ]; then
-    printf "${Red}The configuration file 'config.yml' doesn't exist.
+    printf "\t${Red}The configuration file 'config.yml' doesn't exist.
     Please, create and fulfill it.
     Quitting...${Color_Off}\n"
     exit 1
@@ -108,18 +114,50 @@ source "$SCRIPTPATH/lib/.updater.sh"
 # Checking provided configuration
 source "$SCRIPTPATH/lib/.config_checker.sh"
 
-# Checking for committed files
-source "$SCRIPTPATH/lib/.commit_manager.sh"
-if [[ $interact ]];then
-    question="Continue ? (Y/n) "
-    ask_continue "$question"
+################################
+# Processing provided git info #
+################################
+printf "${Blue}Processing provided git information ...${Color_Off}\n"
+
+NAME="${parameters_project_name}${parameters_delivery_suffix_format}"
+
+DELIVER_TOP_FOLDER="$parameters_delivery_folder_parent/$NAME"
+FOLDER_SRC="$DELIVER_TOP_FOLDER/$parameters_delivery_folder_sources"
+TMP_DIR="$DELIVER_TOP_FOLDER/tmp"
+TMP_TAR="$TMP_DIR/tmp.tar.gz"
+
+rm -rf $DELIVER_TOP_FOLDER 2> /dev/null
+
+if [[ -z "$BRANCH" ]]; then
+    source "$SCRIPTPATH/lib/.commit_manager.sh"
+else
+    source "$SCRIPTPATH/lib/.branch_manager.sh"
 fi
 
-# Processing committed files
+# extract tmp archive in source dir
+mkdir ${FOLDER_SRC} 2> /dev/null
+ if [ ! "$parameters_project_target_root" == "." ]; then
+    tar ixf $TMP_TAR -C ${FOLDER_SRC} --strip-components=1 "${parameters_project_target_root}"
+else
+    tar ixf $TMP_TAR -C ${FOLDER_SRC}
+fi
+
+printf "${Blue}File list :${Color_Off}\n"
+echo "-----------------------------------------------------------------"
+tar itzf $TMP_TAR | grep -v '\/$'
+echo "-----------------------------------------------------------------"
+printf "${Green}Files are ready for the packages in $FOLDER_SRC${Color_Off}\n"
+
+rm -rf $TMP_DIR 2> /dev/null
+
+########################################
+# Packing/processing checked git files #
+########################################
+[[ $interact ]] && ask_continue "Continue ? (Y/n) "
 source "$SCRIPTPATH/lib/.packager.sh"
-if [[ $interact ]];then
-    question="Proceed to deploy ? (Y/n) "
-    ask_continue "$question" "no"
-fi
 
+#######################
+# deploying git files #
+#######################
+[[ $interact ]] && ask_continue "Proceed to deploy ? (Y/n) " "no"
 source "$SCRIPTPATH/lib/.deployer.sh"
