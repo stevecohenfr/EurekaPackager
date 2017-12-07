@@ -35,13 +35,13 @@ Available Options:
 |:----------------------------------------------:	|:-----------------------------------------------------------------:	|:--------------------------:	            |
 | -c= / --commit=<SHA1 commit>                     	| use the commit sha1 (short or long) to get files                      |             Yes (no if message provided) 	|
 | -m= / --message=<message to search in a commit > 	| search a commit using a part of the commit message                	|             Yes (no if commit provided)   |
+| -b / --branch                                  	| search branch by a part of it's name and get it's changes. Current if none specified as follows : '-b=word in branch name'            |             Yes (if message or commit not provided) |
 | -e= / --env=<env short or full name>             	| Create package for specific environment provided in conf.yml file 	|             no (asked if not provided)    |
 | *(in progress: )-u / --upgrade*               	| *self upgrade*                                                      	|             no             	            |
 | -h / --help                                     	| show help                                                         	|             no             	            |
 | -v / --version                                  	| show the script version                                           	|             no             	            |
 | -i / --interact                                  	| interactive mode. Not enabled by default                              |             no             	            |
 | -vv / --verbose                                  	| verbosity : more information provided during process (in progress)    |             no             	            |
-| -b / --branch                                  	| search branch by a part of it's name and get it's files               |             Yes (if message or commit not provided) |
 
 commit and message options can be used together and several times :
 
@@ -86,7 +86,7 @@ parameters:  # all config container
         name: Production      # Env full name
         short: p              # shortcut to use in argument or if asked
         suffix: __PROD__      # For env specific lines*
-        origin_branch: master # for branch packing/deploying : original branch to get differences from
+        origin_branch: master # for branch packing/deploying : original branch to get differences from. 'master' branch by default
         deploy:
           type: src|sources/pkg|package # type of the delivery to deploy
           user:  test                   # user allowed to deploy on server
@@ -97,7 +97,7 @@ parameters:  # all config container
             host: localhost
 
           target: /var/www # Target where to deliver the target or sources
-          commands: # (optional & experimental : commands with arguments with "--" prefixes errored) lists of commands to execute before
+          commands: # (optional : commands with arguments with "--" prefixes errored) lists of commands to execute before
             before_scripts:
               - ls -alh
               - pwd
@@ -132,7 +132,7 @@ In the PROD package / sources you will only have :
 
 ---
 
-TODOs/ ideas :
+TODOs / ideas :
 - code cleanups / refactors
 - ssh proxy hops support ([Proxies_and_Jump_Hosts](https://en.wikibooks.org/wiki/OpenSSH/Cookbook/Proxies_and_Jump_Hosts) , [ssh hops](https://sellarafaeli.wordpress.com/2014/03/24/copy-local-files-into-remote-server-through-n1-ssh-hops/))
 - self update script

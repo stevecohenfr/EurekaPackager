@@ -41,7 +41,7 @@ function update_env {
     done;
 }
 
-mkdir $DELIVER_FOLDER
+mkdir $DELIVER_FOLDER 2> /dev/null
 cp -r "${FOLDER_SRC}/." $DELIVER_FOLDER
 
 for file in `find $DELIVER_FOLDER -type f`; do

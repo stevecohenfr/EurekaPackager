@@ -1,14 +1,5 @@
 #!/bin/bash
 
-printf "${Blue}Processing provided git information ...${Color_Off}\n"
-
-declare -A COMMITS
-NAME="${parameters_project_name}${parameters_delivery_suffix_format}"
-
-DELIVER_TOP_FOLDER="$parameters_delivery_folder_parent/$NAME"
-FOLDER_SRC="$DELIVER_TOP_FOLDER/$parameters_delivery_folder_sources"
-TMP_DIR="$DELIVER_TOP_FOLDER/tmp"
-TMP_TAR="$TMP_DIR/tmp.tar.gz"
 
 #######################################
 ############ SCRIPT LOGIC #############
@@ -40,6 +31,7 @@ if [[ ! ${MESSAGE} == '' ]]; then
     done
 fi
 
+declare -A COMMITS
 
 # List commits in map array
 for commit in $COMMIT; do
@@ -74,8 +66,6 @@ for COMMIT_LINE in "${SORTED_COMMITS[@]}"; do
 done
 echo "-----------------------------------------------------------------"
 
-
-rm -rf $DELIVER_TOP_FOLDER 2> /dev/null
 mkdir -p $TMP_DIR 2> /dev/null
 
 #temp tar archives for each commit
@@ -86,20 +76,3 @@ for commit in $COMMIT_LIST; do
 done
 #concat tar archives in the final tar
 cat $tar_files >> $TMP_TAR
-
-# extract tmp archive in source dir
-mkdir ${FOLDER_SRC} 2> /dev/null
- if [ ! "$parameters_project_target_root" == "." ]; then
-    tar ixf $TMP_TAR -C ${FOLDER_SRC} --strip-components=1 "${parameters_project_target_root}"
-else
-    tar ixf $TMP_TAR -C ${FOLDER_SRC}
-fi
-
-
-printf "${Blue}Files list :${Color_Off}\n"
-echo "-----------------------------------------------------------------"
-tar itzf $TMP_TAR | grep -v '\/$'
-echo "-----------------------------------------------------------------"
-printf "${Green}Files are ready for the packages in $FOLDER_SRC${Color_Off}\n"
-
-rm -rf $TMP_DIR
