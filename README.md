@@ -41,10 +41,16 @@ Available Options:
 | -v / --version                                  	| show the script version                                           	|             no             	            |
 | -i / --interact                                  	| interactive mode. Not enabled by default                              |             no             	            |
 | -vv / --verbose                                  	| verbosity : more information provided during process (in progress)    |             no             	            |
+| -b / --branch                                  	| search branch by a part of it's name and get it's files               |             Yes (if message or commit not provided) |
 
 commit and message options can be used together and several times :
 
     $ <path/to/scrips>/EurekaPackager.sh -c=c123 -m=atag -c=c5654789 -m=Create
+
+branch option can only be used once. Any commit or message options will be ignored.
+
+    $ <path/to/scrips>/EurekaPackager.sh -c -b=c123 -m=atag -c=c5654789 -m=Create
+
 
 #### Configuration
 
@@ -76,10 +82,11 @@ parameters:  # all config container
         - integ
         - recette
 
-      prod:               # each environnement has the following config
-        name: Production  # Env full name
-        short: p          # shortcut to use in argument or if asked
-        suffix: __PROD__  # For env specific lines*
+      prod:                   # each environnement has the following config
+        name: Production      # Env full name
+        short: p              # shortcut to use in argument or if asked
+        suffix: __PROD__      # For env specific lines*
+        origin_branch: master # for branch packing/deploying : original branch to get differences from
         deploy:
           type: src|sources/pkg|package # type of the delivery to deploy
           user:  test                   # user allowed to deploy on server

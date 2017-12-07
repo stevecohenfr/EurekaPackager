@@ -27,7 +27,6 @@ if [[ ! ${MESSAGE} == '' ]]; then
             echo "-----------------------------------------------------------------"
             echo "${COMMIT_LINES}"
             echo "-----------------------------------------------------------------"
-
             question="Is this the commit/Are these the commits you want to deliver ?(Y/n) "
             [[ $interact ]] && proceed=$(ask_continue "$question") || proceed=0
 
@@ -75,8 +74,9 @@ for COMMIT_LINE in "${SORTED_COMMITS[@]}"; do
 done
 echo "-----------------------------------------------------------------"
 
-rm -rf $DELIVER_TOP_FOLDER
-mkdir -p $TMP_DIR
+
+rm -rf $DELIVER_TOP_FOLDER 2> /dev/null
+mkdir -p $TMP_DIR 2> /dev/null
 
 #temp tar archives for each commit
 tar_files=''
@@ -88,7 +88,7 @@ done
 cat $tar_files >> $TMP_TAR
 
 # extract tmp archive in source dir
-mkdir ${FOLDER_SRC}
+mkdir ${FOLDER_SRC} 2> /dev/null
  if [ ! "$parameters_project_target_root" == "." ]; then
     tar ixf $TMP_TAR -C ${FOLDER_SRC} --strip-components=1 "${parameters_project_target_root}"
 else

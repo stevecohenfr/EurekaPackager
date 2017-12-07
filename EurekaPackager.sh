@@ -31,6 +31,7 @@ function show_usage {
     echo -e "  -c, --commit=<commit SHA1>\t\t use the commit sha1 to get files"
     echo -e "  -m, --message=<commit message>\t\t search a commit using a part of the commit message"
     echo -e "  -e,  --env=<environment>\t\t\t Create package for specific environement"
+    echo -e "  -b,  --branch\t\t\t create package/delivery files from a branch. Current if none specified as follows '-b=word in branch name'"
     echo -e "  -u,  --upgrade\t\t\t self-upgrade the script"
     echo -e "  -i, --interact\t\t\t interaction mode : questions asked"
     echo -e "  -h,  --help\t\t\t\t show this help"
@@ -61,13 +62,15 @@ for i in "$@";do
         MESSAGE=$(echo -e "${MESSAGE}\n${i#*=}")
         shift
         ;;
-        -b=*|--branch=*)
-        BRANCH=$(echo -e "${i#*=}")
-        shift
-        ;;
         -e=*|--env=*)
         ENV="${i#*=}"
         shift
+        ;;
+        -b|--branch)
+        BRANCH='\*'
+        ;;
+        -b=*|--branch=*)
+        BRANCH=$(echo -e "${i#*=}")
         ;;
         -i|--interact)
         interact=0

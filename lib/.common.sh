@@ -13,6 +13,9 @@ Blue='\033[0;34m'         # Blue
 Purple='\033[0;35m'       # Purple
 Cyan='\033[0;36m'         # Cyan
 White='\033[0;37m'        # White
+Bold='\033[1m'            # Bold text
+Underline='\033[4m'       # Underline text
+
 # Script Infos
 SCRIPT_VERSION='0.7'
 
