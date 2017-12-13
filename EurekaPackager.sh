@@ -67,10 +67,12 @@ for i in "$@";do
         shift
         ;;
         -b|--branch)
-        BRANCH='\*'
+        BRANCH="${BRANCH}\n\*"
+        shift
         ;;
         -b=*|--branch=*)
-        BRANCH=$(echo -e "${i#*=}")
+        BRANCH=$(echo -e "${BRANCH}\n${i#*=}")
+        shift
         ;;
         -i|--interact)
         interact=0
@@ -144,7 +146,7 @@ fi
 
 printf "${Blue}File list :${Color_Off}\n"
 echo "-----------------------------------------------------------------"
-tar itzf $TMP_TAR | grep -v '\/$'
+tar itzf $TMP_TAR | grep -v '\/$' | sort -u
 echo "-----------------------------------------------------------------"
 printf "${Green}Files are ready for the packages in $FOLDER_SRC${Color_Off}\n"
 

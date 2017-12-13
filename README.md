@@ -47,13 +47,14 @@ commit and message options can be used together and several times :
 
     $ <path/to/scrips>/EurekaPackager.sh -c=c123 -m=atag -c=c5654789 -m=Create
 
-The branch option can only be used once. Any commit or message options will be ignored.
+The branch option can be used several times.
+Any commit or message options will be ignored. For example
 
-    $ <path/to/scrips>/EurekaPackager.sh -b -c=c123 -m=atag -c=c5654789 -m=Create
+    $ <path/to/scrips>/EurekaPackager.sh -b -c=c123 -m=atag -c=c5654789 -m=Create -b=fix
 
 will have same result as
 
-    $ <path/to/scrips>/EurekaPackager.sh -b
+    $ <path/to/scrips>/EurekaPackager.sh -b -b=fix
 
 and will get the differences between the current branch
 and the branch set in 'origin_branch' parameter in config.yml
