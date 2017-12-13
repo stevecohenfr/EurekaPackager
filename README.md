@@ -98,11 +98,13 @@ parameters:  # all config container
           type: src|sources/pkg|package # type of the delivery to deploy
           user:  test                   # user allowed to deploy on server
           host:  localhost              # the host
-          pass: ***                     # /!\ not secure and redundant (asked for ssh after/before script execution and rsync). Use ssh keys instead
-          proxy: # TODO : proxy needed to acces on the final deploy server
+          pass: ***                     # /!\ not secure and redundant. Use ssh keys instead
+          # asked for ssh after/before script execution and rsync
+          # this line prints the pass before ssh/rsync commands
+          proxy: # proxy needed to acces to the final deploy server by an ssh hop
             user: test
             host: localhost
-
+            pass: # [optional]
           target: /var/www # Target where to deliver the target or sources
           commands: # (optional : commands with arguments with "--" prefixes errored) lists of commands to execute before
             before_scripts:
@@ -141,7 +143,8 @@ In the PROD package / sources you will only have :
 
 TODOs / ideas :
 - code cleanups / refactors
-- ssh proxy hops support ([Proxies_and_Jump_Hosts](https://en.wikibooks.org/wiki/OpenSSH/Cookbook/Proxies_and_Jump_Hosts) , [ssh hops](https://sellarafaeli.wordpress.com/2014/03/24/copy-local-files-into-remote-server-through-n1-ssh-hops/))
 - self update script
 - fetch lib/.*.sh dependencies from web instead of having it locally
 - previous point add.: add a yml property letting to choose (web or local)
+- ~~branch support~~
+- ~~ssh proxy hops support ([Proxies_and_Jump_Hosts](https://en.wikibooks.org/wiki/OpenSSH/Cookbook/Proxies_and_Jump_Hosts) , [ssh hops](https://sellarafaeli.wordpress.com/2014/03/24/copy-local-files-into-remote-server-through-n1-ssh-hops/))~~

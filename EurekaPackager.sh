@@ -12,7 +12,7 @@ source "$SCRIPTPATH/lib/.common.sh"
 
 echo
 printf "${Cyan}This script helps you to deliver a tar package or sources of changes in a project ${Color_Off}\n"
-printf "${Cyan}If interactive mode set, it will ask you information to confirm what you provided in arguments and in the config file${Color_Off}\n"
+printf "${Cyan}If interactive mode set, it will ask you to confirm information you provided in arguments and in the config file${Color_Off}\n"
 echo
 
 #############
