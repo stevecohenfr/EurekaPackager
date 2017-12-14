@@ -11,7 +11,7 @@ if [[ $B_COUNT -eq 0 ]];then
     printf "${Red}No Branch found !\nQuiting... ${Color_Off}\n"
     exit 1
 elif [[ $B_COUNT -eq 1 ]];then
-    printf "${Green}Branch found !${Color_Off}\n"
+    printf "${Green}Branch found :${Color_Off}\n"
 else
     printf "${Green}Several Branches found :${Color_Off}\n"
 fi

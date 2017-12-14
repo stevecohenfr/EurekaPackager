@@ -67,7 +67,8 @@ for i in "$@";do
         shift
         ;;
         -b|--branch)
-        BRANCH="${BRANCH}\n\*"
+        curr='\*'
+        BRANCH=$(echo -e "${BRANCH}\n${curr}")
         shift
         ;;
         -b=*|--branch=*)
@@ -110,7 +111,7 @@ fi
 # generate vars from yaml file
 create_variables config.yml
 
-# Scripts self-update functions
+# Scripts self-update functions (TODO)
 source "$SCRIPTPATH/lib/.updater.sh"
 
 # Checking provided configuration
