@@ -37,6 +37,7 @@ function show_usage {
     echo -e "  -h,  --help\t\t\t\t show this help"
     echo -e "  -v,  --version\t\t\t show the script version"
     echo -e "  -vv,  --verbose\t\t\t show the script version"
+    echo -e "  -p, --pack-only\t\t\t no deploy, package only"
 }
 
 
@@ -78,6 +79,10 @@ for i in "$@";do
         ;;
         -vv|--verbose)
         verbose=0
+        shift
+        ;;
+        -p|--pack-only)
+        pack_only=0
         shift
         ;;
         -u|--upgrade)
@@ -159,5 +164,7 @@ source "$SCRIPTPATH/lib/.packager.sh"
 #######################
 # deploying git files #
 #######################
-[[ $interact ]] && ask_continue "Proceed to deploy ? (Y/n) " "no"
-source "$SCRIPTPATH/lib/.deployer.sh"
+if [ ! $pack_only ];then
+    [[ $interact ]] && ask_continue "Proceed to deploy ? (Y/n) " "no"
+    source "$SCRIPTPATH/lib/.deployer.sh"
+fi

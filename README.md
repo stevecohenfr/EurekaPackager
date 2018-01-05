@@ -31,10 +31,10 @@ Then, create a 'config.yml' file at your project's root folder
 Available Options:
 
 
-|                     Option                     	|                               Detail                              	|          Required          	            |
-|:----------------------------------------------:	|:-----------------------------------------------------------------:	|:--------------------------:	            |
+|                     Option                        |                               Detail                              	|          Required          	            |
+|:----------------------------------------------:   |:-----------------------------------------------------------------:	|:--------------------------:	            |
 | -c= / --commit=<SHA1 commit>                     	| use the commit sha1 (short or long) to get files                      |             Yes (no if message provided) 	|
-| -m= / --message=<message to search in a commit > 	| search a commit using a part of the commit message                	|             Yes (no if commit provided)   |
+| -m= / --message=<message to search in a commit >  | search a commit using a part of the commit message                	|             Yes (no if commit provided)   |
 | -b / --branch                                  	| search branch by a part of it's name and get it's changes. Current if none specified as follows : '-b=word in branch name'            |             Yes (if message or commit not provided) |
 | -e= / --env=<env short or full name>             	| Create package for specific environment provided in conf.yml file 	|             no (asked if not provided)    |
 | *(in progress: )-u / --upgrade*               	| *self upgrade*                                                      	|             no             	            |
@@ -42,6 +42,8 @@ Available Options:
 | -v / --version                                  	| show the script version                                           	|             no             	            |
 | -i / --interact                                  	| interactive mode. Not enabled by default                              |             no             	            |
 | -vv / --verbose                                  	| verbosity : more information provided during process (in progress)    |             no             	            |
+| -p / --pack-only                                  | no deploy, package only                                  	            |             no             	            |
+
 
 commit and message options can be used together and several times :
 
