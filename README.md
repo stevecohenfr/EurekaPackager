@@ -106,7 +106,7 @@ parameters:  # all config container
             host: localhost
             pass: # [optional]
           target: /var/www # Target where to deliver the target or sources
-          commands: # (optional : commands with arguments with "--" prefixes errored) lists of commands to execute before
+          commands: # [optional] lists of commands to execute before
             before_scripts:
               - ls -alh
               - pwd
