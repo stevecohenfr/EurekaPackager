@@ -81,7 +81,7 @@ for i in "$@";do
         shift
         ;;
         -u|--upgrade)
-        self_upgrade
+        do_upgrade=0
         ;;
         -h|--help)
         show_usage
@@ -110,6 +110,7 @@ create_variables config.yml
 
 # Scripts self-update functions
 source "$SCRIPTPATH/lib/.updater.sh"
+[[ $do_upgrade ]] && upgrade
 
 # Checking provided configuration
 source "$SCRIPTPATH/lib/.config_checker.sh"
@@ -144,7 +145,7 @@ fi
 
 printf "${Blue}File list :${Color_Off}\n"
 echo "-----------------------------------------------------------------"
-tar itzf $TMP_TAR | grep -v '\/$'
+tar itzf $TMP_TAR | grep -v '\/$' | sort -u
 echo "-----------------------------------------------------------------"
 printf "${Green}Files are ready for the packages in $FOLDER_SRC${Color_Off}\n"
 

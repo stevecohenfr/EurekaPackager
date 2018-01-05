@@ -9,8 +9,31 @@ function check_update {
     REMOTE_VERSION=`curl -sL https://rawgit.com/ReaperSoon/EurekaPackager/dev/VERSION`
 
     if [[ "$SCRIPT_VERSION" < "$REMOTE_VERSION" ]]; then
-	printf "${Yellow}Your script is deprecated (${SCRIPT_VERSION} < ${REMOTE_VERSION}). Please use -u or --upgrade${Color_Off}\n"
+	    printf "${Yellow}Your script is deprecated (${SCRIPT_VERSION} < ${REMOTE_VERSION}). Please use -u or --upgrade${Color_Off}\n"
     fi
+}
+
+upgrade (){
+    cd ${SCRIPTPATH}
+    git checkout ${parameters_update_from} &> /dev/null
+    UPSTREAM=${1:-'@{u}'}
+    LOCAL=$(git rev-parse @)
+    REMOTE=$(git rev-parse "$UPSTREAM")
+    BASE=$(git merge-base @ "$UPSTREAM")
+
+    if [ $LOCAL = $REMOTE ]; then
+        printf "${Yellow}Up-to-date !${Color_Off}\n"
+    elif [ $LOCAL = $BASE ]; then
+        printf "${Blue}Updating...${Color_Off}"
+        git pull --prune &> /dev/null
+        printf "${Blue}${Bold}Up-to-date !${Color_Off}\n"
+    elif [ $REMOTE = $BASE ]; then
+        printf "${Red}you made some modifcations :${Color_Off}\n"
+        git diff
+    else
+        printf "${Red}Diverged... rebase needed${Color_Off}\n"
+    fi
+    exit 1
 }
 
 function self_upgrade {
