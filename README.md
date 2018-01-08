@@ -32,7 +32,7 @@ Available Options:
 
 
 |                     Option                        |                               Detail                              	|          Required          	            |
-|:----------------------------------------------:   |:-----------------------------------------------------------------:	|:--------------------------:	            |
+|:-------------------------------------------------:|:---------------------------------------------------------------------:|:-----------------------------------------:|
 | -c= / --commit=<SHA1 commit>                     	| use the commit sha1 (short or long) to get files                      |             Yes (no if message provided) 	|
 | -m= / --message=<message to search in a commit >  | search a commit using a part of the commit message                	|             Yes (no if commit provided)   |
 | -b / --branch                                  	| search branch by a part of it's name and get it's changes. Current if none specified as follows : '-b=word in branch name'            |             Yes (if message or commit not provided) |
@@ -47,15 +47,15 @@ Available Options:
 
 commit and message options can be used together and several times :
 
-    $ <path/to/scrips>/EurekaPackager.sh -c=c123 -m=atag -c=c5654789 -m=Create
+    $ <path/to/scripts>/EurekaPackager.sh -c=c123 -m=atag -c=c5654789 -m=Create
 
 The branch option can only be used once. Any commit or message options will be ignored.
 
-    $ <path/to/scrips>/EurekaPackager.sh -b -c=c123 -m=atag -c=c5654789 -m=Create
+    $ <path/to/scripts>/EurekaPackager.sh -b -c=c123 -m=atag -c=c5654789 -m=Create
 
 will have same result as
 
-    $ <path/to/scrips>/EurekaPackager.sh -b
+    $ <path/to/scripts>/EurekaPackager.sh -b
 
 and will get the differences between the current branch
 and the branch set in 'origin_branch' parameter in config.yml

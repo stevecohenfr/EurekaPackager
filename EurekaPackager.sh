@@ -149,7 +149,7 @@ fi
 
 printf "${Blue}File list :${Color_Off}\n"
 echo "-----------------------------------------------------------------"
-tar itzf $TMP_TAR | grep -v '\/$'
+tar itzf $TMP_TAR | grep -v '\/$' | sort -u
 echo "-----------------------------------------------------------------"
 printf "${Green}Files are ready for the packages in $FOLDER_SRC${Color_Off}\n"
 
