@@ -87,15 +87,14 @@ parameters:  # all config container
     environments:
       list: # List of names of the deploy environnements
         - prod
-        - preprod
-        - integ
-        - recette
+        - release
+        - dev
 
       prod:                   # each environnement has the following config
         name: Production      # Env full name
         short: p              # shortcut to use in argument or if asked
-        suffix: __PROD__      # For env specific lines*
-        origin_branch: master # for branch packing/deploying : original branch to get differences from. 'master' branch by default
+        suffix: __PROD__      # For env specific lines/files*
+        origin_branch: master # (optional :'master' branch by default) for branch packing/deploying : original branch to get differences from. 
         deploy:
           type: src|sources/pkg|package # type of the delivery to deploy
           user:  test                   # user allowed to deploy on server
@@ -117,17 +116,19 @@ parameters:  # all config container
               - ls -alh
               - date
 
-      preprod : # The key must be the same as provided in the list
+      release : # The key must be the same as provided in the list
       ...
-      integ : # each provided env in list property must have it's config
+      dev : # each provided env in list property must have it's config
       ...
-      recette : # each defined env must be in the list property
-      ...
+
 ```
 
 \* enviroments_\<env>_suffix property : Environment specific variable affectation
 
 :warning: All other occurrences of this var init and their entire line will be erased
+:warning: Some files aren't supported - yml for example. In this case, use ```\<env>_suffix``` to filename. Ex:
+```config__PROD__.yml, config__DEV__.yml ...```
+
 
 for example: if your project has this affectation
 
