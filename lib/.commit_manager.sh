@@ -10,7 +10,7 @@ if [[ ! ${MESSAGE} == '' ]]; then
     messages=$(echo -e ${MESSAGE}|uniq)
     for mess in $messages; do
         printf "Searching commit SHA1 using commit containing message ${Blue}${mess}${Color_Off}...\n"
-        COMMIT_LINES=`git log --all --pretty=format:"%H %ai %s" --grep="${mess}"`
+        COMMIT_LINES=`git log --all --pretty=format:"%H %ai %s" --grep="${mess}" | grep -v "index on" | grep -v "Uncommitted"`
 
         # Commit found
         if [ ! "${COMMIT_LINES}" == '' ]; then
