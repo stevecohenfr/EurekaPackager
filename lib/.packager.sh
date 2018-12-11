@@ -49,8 +49,9 @@ for file in `find $DELIVER_FOLDER -type f`; do
 done
 
 for file in `find $DELIVER_FOLDER -name *${!ENV_SUFFIX}*`; do
-    rm `echo $file | sed s/$${!ENV_SUFFIX}//g`;
-    mv $file `echo $file | sed s/$${!ENV_SUFFIX}//g`;
+    [[ $verbose ]] && echo "processing file '${file}'";
+    rm `echo $file | sed s/${!ENV_SUFFIX}//g`;
+    mv $file `echo $file | sed s/${!ENV_SUFFIX}//g`;
 done
 
 type=environments_${ENV}_deploy_type
